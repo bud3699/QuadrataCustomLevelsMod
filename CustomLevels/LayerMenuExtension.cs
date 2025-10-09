@@ -227,6 +227,7 @@ public static class LayerMenuExtensions
                 Button loadButton = loadButtonObj.GetComponent<Button>();
                 loadButton.onClick.AddListener(() =>
                 {
+                    Director.gameMode = (GameMode)3;
                     DirectorPatches.customLevelCode = inputField.text;
                     UIManager.instance?.menuLayer.CloseMenu();
                     Director.instance.Init();

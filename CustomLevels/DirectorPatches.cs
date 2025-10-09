@@ -69,8 +69,6 @@ namespace QuadrataPatcher
                     var skipLabel = new Label();
                     code.labels.Add(skipLabel);
 
-                    if (!string.IsNullOrEmpty(customLevelCode))
-                    {
                         yield return new CodeInstruction(OpCodes.Ldsfld, gameModeField);
                         yield return new CodeInstruction(OpCodes.Box, typeof(GameMode));
                         yield return new CodeInstruction(OpCodes.Callvirt, toStringMethod);
@@ -81,7 +79,7 @@ namespace QuadrataPatcher
                         yield return new CodeInstruction(OpCodes.Ldarg_0);
                         yield return new CodeInstruction(OpCodes.Ldsfld, customLevelCodeField);
                         yield return new CodeInstruction(OpCodes.Call, loadCustomMethod);
-                    }
+                    
                 }
 
                 yield return code;
