@@ -136,7 +136,7 @@ namespace QuadrataPatcher
         public static void SafeInitVisuals(object directorInstance)
         {
             var traverse = Traverse.Create(directorInstance);
-            var gameMode = (GameMode)traverse.Field("gameMode").GetValue();
+            var gameMode = Director.gameMode;  //(GameMode)traverse.Field("gameMode").GetValue();
 
             (float, int, bool, float) tuple;
 
@@ -145,30 +145,44 @@ namespace QuadrataPatcher
                 Debug.Log("[Patch] Using fallback tuple for GameMode 3");
                 tuple = (0.75f, 1, false, 4.5f);
             }
+            else if (SandboxStateMapping.mapping.TryGetValue(gameMode, out var mappedTuple))
+            {
+                Debug.Log("[Patch] gamemode: " + gameMode.ToString());
+                tuple = mappedTuple;
+            }
             else
             {
-                tuple = SandboxStateMapping.mapping[gameMode];
+                Debug.LogWarning($"[Patch] Unknown GameMode: {gameMode}, using default fallback");
+                tuple = (0.75f, 1, false, 4.5f);
             }
+
+
 
             CameraSizeManager.SetAdditiveSize(tuple.Item1);
 
-            var gridLines = AccessTools.Field(AccessTools.TypeByName("GridLines"), "instance")?.GetValue(null);
-            if (gridLines != null)
-            {
-                AccessTools.Method(gridLines.GetType(), "SetGameGrid")?.Invoke(gridLines, new object[] { tuple.Item2 });
+            //var gridLines = AccessTools.Field(AccessTools.TypeByName("GridLines"), "instance")?.GetValue(null);
+            GridLines.instance?.SetGameGrid(tuple.Item2);
+            //if (gridLines != null)
+            //{
+                //AccessTools.Method(gridLines.GetType(), "SetGameGrid")?.Invoke(gridLines, new object[] { tuple.Item2 });
 
                 if (tuple.Item3)
                 {
-                    var selectedButton = AccessTools.Field(AccessTools.TypeByName("LayerSandbox"), "selectedButton")?.GetValue(null);
-                    bool willPlaceOut = selectedButton is SandboxButtonEntity entity && entity.willPlaceOut;
-                    AccessTools.Method(gridLines.GetType(), "ShowCantPlace")?.Invoke(gridLines, new object[] { willPlaceOut });
+                    //var selectedButton = AccessTools.Field(AccessTools.TypeByName("LayerSandbox"), "selectedButton")?.GetValue(null);
+                    //bool willPlaceOut = selectedButton is SandboxButtonEntity entity && entity.willPlaceOut;
+                    //AccessTools.Method(gridLines.GetType(), "ShowCantPlace")?.Invoke(gridLines, new object[] { willPlaceOut });
+                    GridLines.instance?.ShowCantPlace(LayerSandbox.selectedButton is SandboxButtonEntity sandboxButtonEntity && sandboxButtonEntity.willPlaceOut);
                 }
                 else
                 {
-                    AccessTools.Method(gridLines.GetType(), "ResetCantPlace")?.Invoke(gridLines, null);
-                }
-            }
-
+                    //AccessTools.Method(gridLines.GetType(), "ResetCantPlace")?.Invoke(gridLines, null);
+                    GridLines.instance?.ResetCantPlace();
+                } 
+                (UIManager.instance.sandboxLayer.allEntityButtons.Last() as SandboxButtonEntity).SetSprite();
+                var heartContainer = traverse.Field("heartContainer").GetValue();
+                AccessTools.Method(heartContainer.GetType(), "MoveContainerY")?.Invoke(heartContainer, new object[] { tuple.Item4 });
+            //}
+            /*
             var ui = UIManager.instance;
             var lastButton = ui?.sandboxLayer?.allEntityButtons?.LastOrDefault();
             if (lastButton is SandboxButtonEntity sbEntity)
@@ -178,6 +192,8 @@ namespace QuadrataPatcher
 
             var heartContainer = traverse.Field("heartContainer").GetValue();
             AccessTools.Method(heartContainer.GetType(), "MoveContainerY")?.Invoke(heartContainer, new object[] { tuple.Item4 });
+               */
+            UIManager.instance?.menuLayer.CalculateMenu();
         }
 
     }

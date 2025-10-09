@@ -2,6 +2,7 @@
 using HarmonyLib;
 using QuadrataPatcher;
 using Steamworks;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
@@ -10,6 +11,16 @@ using UnityEngine.UI;
 
 public static class LayerMenuExtensions
 {
+    private static IEnumerator WaitAndChangeSprite(MenuButtonSandbox sandboxBtn, Sprite sprite)
+    {
+        yield return new WaitWhile(() => UIManager.isMenuMoving);
+
+        var traverse = Traverse.Create(sandboxBtn);
+        var buttonIcon = traverse.Field("buttonIcon").GetValue<Image>();
+
+        if (buttonIcon != null){buttonIcon.sprite = sprite;}
+    }
+
     public static void ChangeLevelSelectSizeExtended(this object layerMenuInstance, Vector2 size, float time, Ease ease)
     {
         var traverse = Traverse.Create(layerMenuInstance);
@@ -121,10 +132,10 @@ public static class LayerMenuExtensions
 
         if (gameMode != 3 && levelButtons != null)
         {
-            levelButtons.ForEach(button =>
+            foreach (var button in levelButtons)
             {
-                button.navigationButtons[Vector2.up] = activeButtons[0];
-            });
+                button.gameObject.SetActive(true);
+            }
         }
         else if (levelButtons != null)
         {
@@ -228,13 +239,31 @@ public static class LayerMenuExtensions
                 Button loadButton = loadButtonObj.GetComponent<Button>();
                 loadButton.onClick.AddListener(() =>
                 {
+                    
+                    var sandboxBtn = GameObject.FindObjectsOfType<MenuButtonSandbox>().FirstOrDefault();
+
+                    var sandboxTraverse = Traverse.Create(sandboxBtn);
+                    var toggleMapping = sandboxTraverse.Field("toggleMapping").GetValue<Dictionary<GameMode, (GameMode targetMode, Sprite targetIcon)>>();
+
+                    GameMode currentMode = (GameMode)Traverse.Create(typeof(Director)).Field("gameMode").GetValue();
+                    /*
+                    if (toggleMapping.TryGetValue(currentMode, out var mapping) && !(Director.gameMode == (GameMode)3)) {
+                        Debug.Log("Got value of pre: " + Director.gameMode.ToString());
+                        Director.gameMode = mapping.targetMode;
+                        Debug.Log("Got value of: " + mapping.targetMode.ToString());
+                    }
+                    */
+
                     Director.gameMode = (GameMode)3;
-                    DirectorPatches.customLevelCode = inputField.text;
                     UIManager.instance?.menuLayer.CloseMenu();
+                    UIManager.instance?.sandboxLayer.sideButtons.Last().ResetButton();
+                    Director.instance.StartCoroutine(WaitAndChangeSprite(sandboxBtn, toggleMapping[Director.gameMode].targetIcon));
+                    DirectorPatches.customLevelCode = inputField.text;
                     Director.instance.Init();
 
                     Debug.Log($"[Patch] Loaded custom level code: {inputField.text}");
                 });
+
 
                 Debug.Log("[Patch] Menu Load button and InputField added.");
             }

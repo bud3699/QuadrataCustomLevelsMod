@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using HarmonyLib;
 using System.Reflection;
+using CustomLevels;
 
 [assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.1.0", "Bud3699")]
 [assembly: MelonGame("Mindlabor", "Quadrata")]
@@ -22,6 +23,9 @@ namespace QuadrataPatcher
 
             LevelManagerPatches.ApplyPatch(harmony);
             MelonLogger.Msg("Patched Level Manger to allow gameplay");
+
+            MenuButtonSandboxPatches.ApplyPatch(harmony);
+            MelonLogger.Msg("Patched MenuButtonSandbox to allow icon changes");
 
             string[] args = System.Environment.GetCommandLineArgs();
             bool patchedLayerMenu = false;
