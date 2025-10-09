@@ -18,7 +18,29 @@ namespace QuadrataPatcher
             MelonLogger.Msg("Harmony initialized!");
 
             DirectorPatches.ApplyPatch(harmony);
-            MelonLogger.Msg("Manual patch for Director.Init applied!");
+            MelonLogger.Msg("Manual patch for Director applied!");
+
+            LevelManagerPatches.ApplyPatch(harmony);
+            MelonLogger.Msg("Patched Level Manger to allow gameplay");
+
+            string[] args = System.Environment.GetCommandLineArgs();
+            bool patchedLayerMenu = false;
+
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (args[i] == "-code" && !string.IsNullOrWhiteSpace(args[i + 1]))
+                {
+                    LayerMenuPatch.ApplyPatch(harmony);
+                    MelonLogger.Msg("Patched LayerMenu");
+                    patchedLayerMenu = true;
+                    break;
+                }
+            }
+
+            if (!patchedLayerMenu)
+            {
+                MelonLogger.Msg("Continuing with regular boot ");
+            }
         }
     }
 }

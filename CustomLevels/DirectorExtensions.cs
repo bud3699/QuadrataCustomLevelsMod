@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
 using DG.Tweening;
+using System.Linq;
 
 namespace QuadrataPatcher
 {
@@ -87,8 +88,7 @@ namespace QuadrataPatcher
                 Debug.LogError("UIManager instance still null after waiting!");
                 return;
             }
-            string levelText = "Testing";
-            AccessTools.TypeByName("LevelNumber")?.GetMethod("ChangeLevelText")?.Invoke(null, new object[] { levelText });
+            AccessTools.TypeByName("LevelNumber")?.GetMethod("ChangeLevelText")?.Invoke(null, new object[] { LevelCode });
 
             AccessTools.Method(directorInstance.GetType(), "InitCommonSystems")?.Invoke(directorInstance, null);
 
@@ -101,7 +101,7 @@ namespace QuadrataPatcher
             }
             else Debug.LogWarning("HeartContainer is null!");
 
-            object gridLines = AccessTools.Property(AccessTools.TypeByName("GridLines"), "instance")?.GetValue(null);
+            object gridLines = AccessTools.Field(AccessTools.TypeByName("GridLines"), "instance")?.GetValue(null);
             bool reversed = (bool)Traverse.Create(gameLevel).Field("reversed").GetValue();
             if (gridLines != null)
                 AccessTools.Method(gridLines.GetType(), "SetReversedLine")?.Invoke(gridLines, new object[] { reversed });
@@ -129,13 +129,56 @@ namespace QuadrataPatcher
 
             AccessTools.Method(directorInstance.GetType(), "InitVisuals")?.Invoke(directorInstance, null);
 
-            object selectionFrame = AccessTools.Property(AccessTools.TypeByName("Finder"), "selectionFrame")?.GetValue(null);
-            if (selectionFrame != null)
-                AccessTools.Method(selectionFrame.GetType(), "AnimateSelectionFrame")?.Invoke(selectionFrame, new object[] { Vector2.zero, Ease.InBack, 0f });
-            else
-                Debug.LogWarning("SelectionFrame is null!");
-
             Debug.Log($"<color=green>Custom level loaded successfully: Index {currentLevelIndex}</color>");
         }
+
+
+        public static void SafeInitVisuals(object directorInstance)
+        {
+            var traverse = Traverse.Create(directorInstance);
+            var gameMode = (GameMode)traverse.Field("gameMode").GetValue();
+
+            (float, int, bool, float) tuple;
+
+            if (gameMode == (GameMode)3)
+            {
+                Debug.Log("[Patch] Using fallback tuple for GameMode 3");
+                tuple = (0.75f, 1, false, 4.5f);
+            }
+            else
+            {
+                tuple = SandboxStateMapping.mapping[gameMode];
+            }
+
+            CameraSizeManager.SetAdditiveSize(tuple.Item1);
+
+            var gridLines = AccessTools.Field(AccessTools.TypeByName("GridLines"), "instance")?.GetValue(null);
+            if (gridLines != null)
+            {
+                AccessTools.Method(gridLines.GetType(), "SetGameGrid")?.Invoke(gridLines, new object[] { tuple.Item2 });
+
+                if (tuple.Item3)
+                {
+                    var selectedButton = AccessTools.Field(AccessTools.TypeByName("LayerSandbox"), "selectedButton")?.GetValue(null);
+                    bool willPlaceOut = selectedButton is SandboxButtonEntity entity && entity.willPlaceOut;
+                    AccessTools.Method(gridLines.GetType(), "ShowCantPlace")?.Invoke(gridLines, new object[] { willPlaceOut });
+                }
+                else
+                {
+                    AccessTools.Method(gridLines.GetType(), "ResetCantPlace")?.Invoke(gridLines, null);
+                }
+            }
+
+            var ui = UIManager.instance;
+            var lastButton = ui?.sandboxLayer?.allEntityButtons?.LastOrDefault();
+            if (lastButton is SandboxButtonEntity sbEntity)
+            {
+                sbEntity.SetSprite();
+            }
+
+            var heartContainer = traverse.Field("heartContainer").GetValue();
+            AccessTools.Method(heartContainer.GetType(), "MoveContainerY")?.Invoke(heartContainer, new object[] { tuple.Item4 });
+        }
+
     }
 }
