@@ -6,9 +6,10 @@
 
 - [Quadrata Steam (Base Game)](https://store.steampowered.com/app/2066950/Quadrata/)
 - [Quadrata Level Editor DLC](https://store.steampowered.com/app/3676950/Quadrata_Level_Editor/)
-- Unstripped Libraries (required for mod functionality)
-- MelonLoader Nightly 0.7.1  
+- [Unstripped Libraries (required for mod functionality)](https://unity.bepinex.dev/corlibs/2020.3.30.zip)
+- [MelonLoader Nightly 0.7.1](https://github.com/LavaGang/MelonLoader/releases/tag/v0.7.1)  
   *(Will be bundled with the repository in future releases)*
+  *(Errors about scene managers are normal, the mod will still function)*
 
 > [!IMPORTANT]
 > This mod will not function without the required DLC and Unstripped Libraries. Ensure both are installed before use.
@@ -20,12 +21,34 @@
 
 ## Status
 
-- In development
+- In early access / Development
 - No servers available yet  
 
-## Installation
+## Installation Steps
 
-Installation instructions will be provided once the mod is ready for release.
+1. Install Unstripped Libraries:
+   - Download the [Unstripped Libraries](https://unity.bepinex.dev/corlibs/2020.3.30.zip).
+   - Extract the ZIP.
+   - Copy all `.dll` files to: `Quadrata\Quadrata_Data\Managed`
+   - Replace any existing files if prompted.
+
+2. Install MelonLoader:
+   - Option A: Use the installer and point it to your Quadrata game directory if not automatically found.
+   - Option B: Manually extract MelonLoader files into the Quadrata game folder.
+
+3. Add the Mod:
+   - Download the [latest pre-release of the mod](https://github.com/bud3699/QuadrataCustomLevelsMod/releases/tag/0.1.0).
+   - Create a `Mods` folder inside the Quadrata directory if it doesn't exist.
+   - Place `CustomLevels.dll` inside `Quadrata\Mods`.
+
+4. Launch the Game:
+   - Start Quadrata normally.
+   - MelonLoader should appear and confirm the mod is loaded.
+
+### Notes
+- The Level Editor DLC is REQUIRED for custom levels to function.
+- Scene manager errors during launch are expected — the mod will still work.
+- Any Errors should not be reported to the Game Developer. Create an issue with the bug. Please read if it already exists.
 
 ## Custom Level Creation
 
@@ -36,7 +59,7 @@ Documentation for level creation will be added post-release.
 
 ## Browse Custom Levels
 
-> Not Available right now until release
+> [Custom Levels Server](https://bud.mynetgear.com/quadrata)
 
 
 ## Community
