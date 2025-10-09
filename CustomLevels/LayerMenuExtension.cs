@@ -1,9 +1,12 @@
 ﻿using DG.Tweening;
 using HarmonyLib;
+using QuadrataPatcher;
 using Steamworks;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class LayerMenuExtensions
 {
@@ -27,7 +30,7 @@ public static class LayerMenuExtensions
         }
 
         int gameMode = (int)Traverse.Create(typeof(Director)).Field("gameMode").GetValue();
-        int levelIndex = LevelManager.levelIndex; 
+        int levelIndex = LevelManager.levelIndex;
 
         if ((gameMode != 0 && gameMode != 3 && size.x > 0f) || levelIndex < 1 || levelIndex > 90)
         {
@@ -46,7 +49,6 @@ public static class LayerMenuExtensions
         }).Play();
     }
 
-
     public static void CalculateMenuExtended(this object layerMenuInstance)
     {
         Debug.Log("Using Extended Calculate Menu");
@@ -58,6 +60,7 @@ public static class LayerMenuExtensions
         var peakTopButtons = traverse.Field("peakTopButtons").GetValue<int>();
         var gapTopButtons = traverse.Field("gapTopButtons").GetValue<int>();
         var openedMenuSizeField = traverse.Field("openedMenuSize");
+        var levelNumber = traverse.Field("levelNumber").GetValue<RectTransform>();
 
         if (topButtons == null || activeButtons == null)
         {
@@ -93,7 +96,13 @@ public static class LayerMenuExtensions
         }
 
         Vector2 openedMenuSize = new Vector2(120 * activeButtons.Count, 120f) + Vector2.one * 4f;
-        openedMenuSizeField.SetValue(openedMenuSize);
+        openedMenuSizeField.SetValue(
+            SteamApps.BIsDlcInstalled((AppId_t)3676950u)
+            ? openedMenuSize + new Vector2(440f, 0f)
+            : openedMenuSize
+        );
+
+
 
         int gameMode = (int)Traverse.Create(typeof(Director)).Field("gameMode").GetValue();
 
@@ -124,6 +133,112 @@ public static class LayerMenuExtensions
                 button.gameObject.SetActive(false);
             }
         }
+
+        Transform menuParent = activeButtons.Count > 0 ? activeButtons[0].rectTransform.parent : null;
+
+        if (menuParent != null && SteamApps.BIsDlcInstalled((AppId_t)3676950u))
+        {
+            bool alreadyExists = false;
+            foreach (Transform child in menuParent)
+            {
+                if (child.name == "MenuLoadButton" || child.name == "MenuInputField")
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists)
+            {
+                GameObject loadButtonObj = new GameObject("MenuLoadButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+                RectTransform loadButtonRect = loadButtonObj.GetComponent<RectTransform>();
+                loadButtonObj.transform.SetParent(menuParent, false);
+                loadButtonRect.sizeDelta = new Vector2(70, 60);
+                loadButtonRect.anchorMin = new Vector2(1f, 1f);
+                loadButtonRect.anchorMax = new Vector2(1f, 1f);
+                loadButtonRect.pivot = new Vector2(1f, 1f);
+                loadButtonRect.anchoredPosition = new Vector2(-60f, -30f);
+
+                GameObject loadTextObj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+                RectTransform loadTextRect = loadTextObj.GetComponent<RectTransform>();
+                loadTextObj.transform.SetParent(loadButtonObj.transform, false);
+                loadTextRect.sizeDelta = new Vector2(80, 60);
+                loadTextRect.anchoredPosition = Vector2.zero;
+
+                Text loadText = loadTextObj.GetComponent<Text>();
+                loadText.text = "Load";
+                loadText.alignment = TextAnchor.MiddleCenter;
+                loadText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                loadText.color = Color.black;
+                loadText.fontSize = 20;
+
+                GameObject inputWrapper = new GameObject("MenuInputWrapper", typeof(RectTransform));
+                RectTransform wrapperRect = inputWrapper.GetComponent<RectTransform>();
+                inputWrapper.transform.SetParent(menuParent, false);
+                wrapperRect.sizeDelta = new Vector2(160, 60);
+                wrapperRect.anchorMin = new Vector2(1f, 1f);
+                wrapperRect.anchorMax = new Vector2(1f, 1f);
+                wrapperRect.pivot = new Vector2(1f, 1f);
+                wrapperRect.anchoredPosition = new Vector2(-140f, -30f);
+
+                GameObject borderObj = new GameObject("Border", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                RectTransform borderRect = borderObj.GetComponent<RectTransform>();
+                borderObj.transform.SetParent(inputWrapper.transform, false);
+                borderRect.anchorMin = new Vector2(0.5f, 0.5f);
+                borderRect.anchorMax = new Vector2(0.5f, 0.5f);
+                borderRect.pivot = new Vector2(0.5f, 0.5f);
+                borderRect.sizeDelta = new Vector2(168, 68); 
+                borderRect.anchoredPosition = Vector2.zero;
+
+                Image borderImage = borderObj.GetComponent<Image>();
+                borderImage.color = Color.black;
+
+                GameObject inputObj = new GameObject("MenuInputField", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(InputField));
+                RectTransform inputRect = inputObj.GetComponent<RectTransform>();
+                inputObj.transform.SetParent(inputWrapper.transform, false);
+                inputRect.sizeDelta = new Vector2(160, 60);
+                inputRect.anchorMin = new Vector2(0.5f, 0.5f);
+                inputRect.anchorMax = new Vector2(0.5f, 0.5f);
+                inputRect.pivot = new Vector2(0.5f, 0.5f);
+                inputRect.anchoredPosition = Vector2.zero;
+
+                Image inputImage = inputObj.GetComponent<Image>();
+                inputImage.color = Color.white;
+
+                GameObject inputTextObj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+                RectTransform inputTextRect = inputTextObj.GetComponent<RectTransform>();
+                inputTextObj.transform.SetParent(inputObj.transform, false);
+                inputTextRect.sizeDelta = new Vector2(160, 60);
+                inputTextRect.anchorMin = new Vector2(0.5f, 0.5f);
+                inputTextRect.anchorMax = new Vector2(0.5f, 0.5f);
+                inputTextRect.pivot = new Vector2(0.5f, 0.5f);
+                inputTextRect.anchoredPosition = Vector2.zero;
+
+                Text inputText = inputTextObj.GetComponent<Text>();
+                inputText.text = "J3XJ19";
+                inputText.alignment = TextAnchor.MiddleCenter;
+                inputText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                inputText.color = Color.black;
+                inputText.fontSize = 40;
+
+                InputField inputField = inputObj.GetComponent<InputField>();
+                inputField.textComponent = inputText;
+
+                Button loadButton = loadButtonObj.GetComponent<Button>();
+                loadButton.onClick.AddListener(() =>
+                {
+                    DirectorPatches.customLevelCode = inputField.text;
+                    UIManager.instance?.menuLayer.CloseMenu();
+                    Director.instance.Init();
+
+                    Debug.Log($"[Patch] Loaded custom level code: {inputField.text}");
+                });
+
+                Debug.Log("[Patch] Menu Load button and InputField added.");
+            }
+
+        }
+
 
         Debug.Log(gameMode);
         Debug.Log($"[Patch] CalculateMenuExtended executed — {(gameMode == 3 ? "vertical navigation removed" : "full navigation enabled")}.");

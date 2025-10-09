@@ -321,8 +321,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>del /F /Q "C:\Program Files (x86)\Steam\steamapps\common\Quadrata\Mods\CustomLevels.dll"
+    <PostBuildEvent>@echo off
+del /F /Q "C:\Program Files (x86)\Steam\steamapps\common\Quadrata\Mods\CustomLevels.dll"
 copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Quadrata\Mods\CustomLevels.dll"
+start steam://run/2066950
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

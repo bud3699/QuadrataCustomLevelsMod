@@ -11,7 +11,7 @@ namespace QuadrataPatcher
 {
     public static class DirectorPatches
     {
-        private static string customLevelCode;
+        public static string customLevelCode;
 
         public static void ApplyPatch(HarmonyLib.Harmony harmony)
         {
