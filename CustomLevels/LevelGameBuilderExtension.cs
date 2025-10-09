@@ -15,7 +15,7 @@ namespace QuadrataPatcher
 
             try
             {
-                string url = "http://bud.mynetgear.com:5000/api/levels/code/" + levelCode;
+                string url = "http://bud.mynetgear.com/quadrata/api/levels/code/" + levelCode;
                 Debug.Log($"<color=yellow>Fetching level from server: {url}</color>");
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
