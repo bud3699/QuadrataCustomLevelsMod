@@ -215,7 +215,7 @@ public static class LayerMenuExtensions
                 inputTextRect.anchoredPosition = Vector2.zero;
 
                 Text inputText = inputTextObj.GetComponent<Text>();
-                inputText.text = "J3XJ19";
+                inputText.text = "";
                 inputText.alignment = TextAnchor.MiddleCenter;
                 inputText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
                 inputText.color = Color.black;
@@ -223,6 +223,7 @@ public static class LayerMenuExtensions
 
                 InputField inputField = inputObj.GetComponent<InputField>();
                 inputField.textComponent = inputText;
+                inputField.text = "3MPYMS";
 
                 Button loadButton = loadButtonObj.GetComponent<Button>();
                 loadButton.onClick.AddListener(() =>
