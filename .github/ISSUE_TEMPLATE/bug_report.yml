@@ -1,0 +1,57 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["bug"]
+assignees: ["bud3699"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: bug-info
+    attributes:
+      label: Describe the bug
+      description: Free text description.
+      placeholder: |
+        Tell me what you see!
+        A clear and concise description of what the bug is.
+    validations:
+      required: true 
+  - type: textarea
+    id: reproduce-info
+    attributes:
+      label: Steps to reproduce
+      description: And if you can how to reproduce 
+      placeholder: |
+        Tell me how to reproduce!
+        Go to '...', 2. Click on '....', and so on.
+    validations:
+      required: false 
+  - type: textarea
+    id: expected-info
+    attributes:
+      label: Expected behavior
+      description: Please inform me about expected behavior.
+      placeholder: |
+        Description of behavior!
+    validations:
+      required: false 
+  - type: textarea
+    id: log-file
+    attributes:
+      label: Log File
+      description: Please attach the log files to help me diagnose the issue. Both `\Quadrata\MelonLoader\Latest.log` and `%appdata%\..\LocalLow\Mindlabor\Quadrata\Player.log`
+      placeholder: Drag and drop the log files here or click to upload.
+    validations:
+      required: false
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
