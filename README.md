@@ -37,7 +37,7 @@
    - Option B: Manually extract MelonLoader files into the Quadrata game folder.
 
 3. Add the Mod:
-   - Download the [latest pre-release of the mod](https://github.com/bud3699/QuadrataCustomLevelsMod/releases/tag/0.1.0).
+   - Download the [latest pre-release of the mod](https://github.com/bud3699/QuadrataCustomLevelsMod/tags).
    - Create a `Mods` folder inside the Quadrata directory if it doesn't exist.
    - Place `CustomLevels.dll` inside `Quadrata\Mods`.
 
