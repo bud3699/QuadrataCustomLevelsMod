@@ -309,20 +309,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AchievementPatches.cs" />
-    <Compile Include="DirectorExtensions.cs" />
-    <Compile Include="DirectorPatches.cs" />
-    <Compile Include="DiscordManagerPatches.cs" />
-    <Compile Include="GameLevelData.cs" />
-    <Compile Include="LayerMenuExtension.cs" />
-    <Compile Include="LayerMenuPatches.cs" />
-    <Compile Include="LevelGameBuilderExtension.cs" />
-    <Compile Include="LevelManagerPatches.cs" />
+    <Compile Include="Patches\AchievementPatches.cs" />
+    <Compile Include="Extensions\DirectorExtensions.cs" />
+    <Compile Include="Patches\DirectorPatches.cs" />
+    <Compile Include="Patches\DiscordManagerPatches.cs" />
+    <Compile Include="data\GameLevelData.cs" />
+    <Compile Include="Extensions\LayerMenuExtension.cs" />
+    <Compile Include="Patches\LayerMenuPatches.cs" />
+    <Compile Include="Extensions\LevelGameBuilderExtension.cs" />
+    <Compile Include="Patches\LevelManagerPatches.cs" />
     <Compile Include="main.cs" />
-    <Compile Include="MenuButtonSandboxExtensions.cs" />
-    <Compile Include="MenuButtonSandboxPatches.cs" />
+    <Compile Include="Extensions\MenuButtonSandboxExtensions.cs" />
+    <Compile Include="Patches\MenuButtonSandboxPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>@echo off
