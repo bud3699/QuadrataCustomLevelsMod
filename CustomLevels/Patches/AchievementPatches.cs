@@ -22,6 +22,8 @@ namespace QuadrataPatcher
             var customLevelField = AccessTools.Field(typeof(LevelGameBuilder), "customLevel");
             var directorInstanceGetter = AccessTools.PropertyGetter(typeof(Director), "instance");
 
+            var debugLogMethod = AccessTools.Method(typeof(UnityEngine.Debug), nameof(UnityEngine.Debug.Log), new[] { typeof(object) });
+
             var newInstructions = new List<CodeInstruction>();
 
             var continueLabel = new Label();
@@ -30,6 +32,8 @@ namespace QuadrataPatcher
             newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, levelBuilderField));
             newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, customLevelField));
             newInstructions.Add(new CodeInstruction(OpCodes.Brfalse_S, continueLabel));
+            newInstructions.Add(new CodeInstruction(OpCodes.Ldstr, "blocked achievement"));
+            newInstructions.Add(new CodeInstruction(OpCodes.Call, debugLogMethod));
             newInstructions.Add(new CodeInstruction(OpCodes.Ret));
 
             var instructionList = instructions.ToList();
