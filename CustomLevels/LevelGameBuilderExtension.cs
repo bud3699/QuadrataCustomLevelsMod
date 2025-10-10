@@ -8,9 +8,8 @@ namespace QuadrataPatcher
 {
     public static class LevelGameBuilderExtensions
     {
-        public static void InitCustomLevelFromCode(this object instance, string levelCode, out int currentLevelIndex, out object currentGameLevel)
+        public static void InitCustomLevelFromCode(this object instance, string levelCode, out object currentGameLevel)
         {
-            currentLevelIndex = 90;
             currentGameLevel = null;
 
             try
@@ -66,7 +65,7 @@ namespace QuadrataPatcher
 
                 currentGameLevel = gameLevel;
 
-                Debug.Log($"<color=green>Custom level loaded from code '{levelCode}' with index {currentLevelIndex}!</color>");
+                Debug.Log($"<color=green>Custom level loaded from code '{levelCode}'!</color>");
             }
             catch (Exception ex)
             {

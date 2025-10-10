@@ -21,6 +21,10 @@ namespace QuadrataPatcher
             var transpiler = AccessTools.Method(typeof(DirectorPatches), nameof(InitTranspiler));
             harmony.Patch(original, transpiler: new HarmonyMethod(transpiler));
 
+            var originalInitGameMode = AccessTools.Method(typeof(Director), "InitGameMode");
+            var transpilerInitGameMode = AccessTools.Method(typeof(DirectorPatches), nameof(InitGameModeTranspiler));
+            harmony.Patch(originalInitGameMode, transpiler: new HarmonyMethod(transpilerInitGameMode));
+
             var originalVisuals = AccessTools.Method(typeof(Director), "InitVisuals");
             var prefixVisuals = AccessTools.Method(typeof(DirectorPatches), nameof(InitVisualsPrefix));
             harmony.Patch(originalVisuals, prefix: new HarmonyMethod(prefixVisuals));
@@ -42,6 +46,27 @@ namespace QuadrataPatcher
                 Debug.Log("[Patch] No -code argument found; skipping custom level load.");
             }
         }
+
+        public static IEnumerable<CodeInstruction> InitGameModeTranspiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var debugLogMethod = AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object) });
+            var levelBuilderField = AccessTools.Field(typeof(Director), "levelBuilder");
+            var customLevelField = AccessTools.Field(typeof(LevelGameBuilder), "customLevel");
+
+
+            yield return new CodeInstruction(OpCodes.Ldarg_0);
+            yield return new CodeInstruction(OpCodes.Ldfld, levelBuilderField); 
+
+            yield return new CodeInstruction(OpCodes.Ldc_I4_0);
+
+            yield return new CodeInstruction(OpCodes.Stfld, customLevelField);
+
+            foreach (var instruction in instructions)
+            {
+                yield return instruction;
+            }
+        }
+
 
         public static IEnumerable<CodeInstruction> InitTranspiler(IEnumerable<CodeInstruction> instructions)
         {

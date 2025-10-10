@@ -317,6 +317,8 @@
     <Compile Include="LevelGameBuilderExtension.cs" />
     <Compile Include="LevelManagerPatches.cs" />
     <Compile Include="main.cs" />
+    <Compile Include="MenuButtonSandboxExtensions.cs" />
+    <Compile Include="MenuButtonSandboxPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
