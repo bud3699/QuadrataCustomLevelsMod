@@ -257,9 +257,9 @@ public static class LayerMenuExtensions
                     Director.gameMode = (GameMode)3;
                     UIManager.instance?.menuLayer.CloseMenu();
                     UIManager.instance?.sandboxLayer.sideButtons.Last().ResetButton();
-                    Director.instance.StartCoroutine(WaitAndChangeSprite(sandboxBtn, toggleMapping[Director.gameMode].targetIcon));
+                    Director.instance?.StartCoroutine(WaitAndChangeSprite(sandboxBtn, toggleMapping[Director.gameMode].targetIcon));
                     DirectorPatches.customLevelCode = inputField.text;
-                    Director.instance.Init();
+                    Director.instance?.Init();
 
                     Debug.Log($"[Patch] Loaded custom level code: {inputField.text}");
                 });

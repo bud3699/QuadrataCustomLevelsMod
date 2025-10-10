@@ -49,9 +49,8 @@ namespace QuadrataPatcher
                 return;
             }
 
-            int currentLevelIndex;
             object gameLevel;
-            levelBuilder.InitCustomLevelFromCode(LevelCode, out currentLevelIndex, out gameLevel);
+            levelBuilder.InitCustomLevelFromCode(LevelCode, out gameLevel);
 
             if (gameLevel == null)
             {
@@ -59,35 +58,6 @@ namespace QuadrataPatcher
                 return;
             }
 
-            Type levelManagerType = AccessTools.TypeByName("LevelManager");
-            levelManagerType?.GetMethod("Init")?.Invoke(null, new object[] { currentLevelIndex });
-
-            var ui = UIManager.instance;
-            if (ui != null)
-            {
-                var menuLayer = AccessTools.Field(ui.GetType(), "menuLayer")?.GetValue(ui);
-                if (menuLayer != null)
-                {
-                    var levelButtons = AccessTools.Field(menuLayer.GetType(), "levelButtons")?.GetValue(menuLayer) as IEnumerable<object>;
-                    if (levelButtons != null)
-                    {
-                        foreach (var btn in levelButtons)
-                        {
-                            if (btn is Component comp)
-                            {
-                                AccessTools.Method(comp.GetType(), "Init")?.Invoke(comp, new object[] { currentLevelIndex });
-                            }
-                        }
-                    }
-                    else Debug.LogWarning("UIManager menuLayer.levelButtons is null!");
-                }
-                else Debug.LogWarning("UIManager menuLayer is null!");
-            }
-            else
-            {
-                Debug.LogError("UIManager instance still null after waiting!");
-                return;
-            }
             AccessTools.TypeByName("LevelNumber")?.GetMethod("ChangeLevelText")?.Invoke(null, new object[] { LevelCode });
 
             AccessTools.Method(directorInstance.GetType(), "InitCommonSystems")?.Invoke(directorInstance, null);
@@ -128,8 +98,6 @@ namespace QuadrataPatcher
                 Debug.LogWarning("ReplayManager is null!");
 
             AccessTools.Method(directorInstance.GetType(), "InitVisuals")?.Invoke(directorInstance, null);
-
-            Debug.Log($"<color=green>Custom level loaded successfully: Index {currentLevelIndex}</color>");
         }
 
 
