@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
+using System.Collections;
+using Mindlabor.Utils;
 
 namespace QuadrataPatcher
 {
@@ -18,7 +20,10 @@ namespace QuadrataPatcher
             });
 
             var transpiler = AccessTools.Method(typeof(LevelManagerPatches), nameof(CollectDiamondCoroutineTranspiler));
-            harmony.Patch(original, transpiler: new HarmonyMethod(transpiler));
+            var postfix = AccessTools.Method(typeof(LevelManagerPatches), nameof(CollectDiamondCoroutinePostfix));
+
+            harmony.Patch(original, transpiler: new HarmonyMethod(transpiler), postfix: new HarmonyMethod(postfix));
+
         }
 
         public static IEnumerable<CodeInstruction> CollectDiamondCoroutineTranspiler(IEnumerable<CodeInstruction> instructions)
@@ -56,7 +61,7 @@ namespace QuadrataPatcher
                     yield return new CodeInstruction(OpCodes.Ldstr, "3");
                     yield return new CodeInstruction(OpCodes.Call, stringEqualsMethod);
 
-                    yield return new CodeInstruction(OpCodes.Or); 
+                    yield return new CodeInstruction(OpCodes.Or);
 
                     yield return new CodeInstruction(OpCodes.Ldstr, "Matched gameMode == Game or ToString == \"3\"");
                     yield return new CodeInstruction(OpCodes.Call, debugLogMethod);
@@ -65,7 +70,6 @@ namespace QuadrataPatcher
                     i += 2;
                     continue;
                 }
-
 
                 if (code.opcode == OpCodes.Call &&
                     code.operand is MethodInfo method &&
@@ -82,11 +86,22 @@ namespace QuadrataPatcher
                     yield return new CodeInstruction(OpCodes.Ldstr, "Saving game");
                     yield return new CodeInstruction(OpCodes.Call, debugLogMethod);
 
-                    continue; 
+                    continue;
                 }
 
                 yield return code;
             }
+        }
+
+        [HarmonyPostfix]
+        public static void CollectDiamondCoroutinePostfix(
+            AudioSourceSettings firstDiamond,
+            AudioSourceSettings secondDiamond,
+            int side,
+            AudioSourceSettings success,
+            IEnumerator __result)
+        {
+            CoroutineUtils.RunCoroutine(LevelManagerExtension.HandleGameModeLevelLoad());
         }
     }
 }

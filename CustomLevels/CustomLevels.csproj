@@ -309,6 +309,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\LevelManagerExtension.cs" />
     <Compile Include="Patches\AchievementPatches.cs" />
     <Compile Include="Extensions\DirectorExtensions.cs" />
     <Compile Include="Patches\DirectorPatches.cs" />
