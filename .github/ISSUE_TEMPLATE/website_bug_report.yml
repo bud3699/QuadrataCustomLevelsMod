@@ -1,0 +1,49 @@
+name: Website Bug Report
+description: Report a bug related to viewing or playing levels on the site.
+title: "[Web Bug]: "
+labels: ["bug", "Website"]
+assignees: ["bud3699"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a website issue! This helps improve the experience for everyone.
+
+  - type: textarea
+    id: bug-info
+    attributes:
+      label: What's the issue?
+      description: Describe what went wrong while browsing, viewing, or playing levels.
+      placeholder: |
+        Example: Level preview doesn't load, play button does nothing, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce-info
+    attributes:
+      label: How to reproduce it
+      description: If possible, explain how we can recreate the issue.
+      placeholder: |
+        Example: 1. Go to level page, 2. Click play, 3. Nothing happens.
+    validations:
+      required: false
+
+  - type: input
+    id: browser-info
+    attributes:
+      label: Browser & Device
+      description: What browser and device are you using?
+      placeholder: ex. Chrome on Windows 10, Safari on iPhone
+    validations:
+      required: false
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact (optional)
+      description: If you'd like a follow-up, drop your email or Discord.
+      placeholder: ex. email@example.com or exampleUsername
+    validations:
+      required: false
