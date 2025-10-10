@@ -22,20 +22,29 @@ namespace QuadrataPatcher
             var customLevelField = AccessTools.Field(typeof(LevelGameBuilder), "customLevel");
             var directorInstanceGetter = AccessTools.PropertyGetter(typeof(Director), "instance");
 
-            var newInstructions = new List<CodeInstruction>
+            var newInstructions = new List<CodeInstruction>();
+
+            var continueLabel = new Label();
+
+            newInstructions.Add(new CodeInstruction(OpCodes.Call, directorInstanceGetter));
+            newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, levelBuilderField));
+            newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, customLevelField));
+            newInstructions.Add(new CodeInstruction(OpCodes.Brfalse_S, continueLabel));
+            newInstructions.Add(new CodeInstruction(OpCodes.Ret));
+
+            var instructionList = instructions.ToList();
+
+            if (instructionList.Count > 0)
             {
-                new CodeInstruction(OpCodes.Call, directorInstanceGetter),
-                new CodeInstruction(OpCodes.Ldfld, levelBuilderField),
-                new CodeInstruction(OpCodes.Ldfld, customLevelField),
-                new CodeInstruction(OpCodes.Brfalse_S, instructions.First().labels.FirstOrDefault()),
-                new CodeInstruction(OpCodes.Ret) 
-            };
+                instructionList[0].labels.Add(continueLabel);
+            }
 
             foreach (var instr in newInstructions)
                 yield return instr;
 
-            foreach (var instr in instructions)
+            foreach (var instr in instructionList)
                 yield return instr;
         }
+
     }
 }
