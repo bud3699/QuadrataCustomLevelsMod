@@ -26,6 +26,9 @@ namespace QuadrataPatcher
             MenuButtonSandboxPatches.ApplyPatch(harmony);
             MelonLogger.Msg("Patched MenuButtonSandbox to allow icon changes");
 
+            AchievementPatches.ApplyPatch(harmony);
+            MelonLogger.Msg("Patched Achievements to prevent achievements when loading custom levels");
+
             string[] args = System.Environment.GetCommandLineArgs();
             bool patchedLayerMenu = false;
 
