@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace CustomLevels
+namespace QuadrataPatcher
 {
     [HarmonyPatch(typeof(MenuButtonSandbox), "Awake")]
     internal static class MenuButtonSandboxPatches

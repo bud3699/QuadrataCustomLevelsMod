@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace CustomLevels
+namespace QuadrataPatcher
 {
     internal static class MenuButtonSandboxExtensions
     {

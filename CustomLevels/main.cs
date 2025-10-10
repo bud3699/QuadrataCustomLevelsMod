@@ -1,7 +1,6 @@
 ﻿using MelonLoader;
 using HarmonyLib;
 using System.Reflection;
-using CustomLevels;
 
 [assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.2.0", "Bud3699")]
 [assembly: MelonGame("Mindlabor", "Quadrata")]
