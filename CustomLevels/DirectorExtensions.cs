@@ -57,6 +57,7 @@ namespace QuadrataPatcher
                 Debug.LogError("Failed to load custom level — aborting LoadCustomLevel!");
                 return;
             }
+            DiscordManagerPatches.LevelCodeDiscord = LevelCode;
 
             AccessTools.TypeByName("LevelNumber")?.GetMethod("ChangeLevelText")?.Invoke(null, new object[] { LevelCode });
 

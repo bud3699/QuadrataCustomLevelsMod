@@ -29,6 +29,9 @@ namespace QuadrataPatcher
             AchievementPatches.ApplyPatch(harmony);
             MelonLogger.Msg("Patched Achievements to prevent achievements when loading custom levels");
 
+            DiscordManagerPatches.ApplyPatch(harmony);
+            MelonLogger.Msg("Patched DiscordManager to show custom level presence");
+
             string[] args = System.Environment.GetCommandLineArgs();
             bool patchedLayerMenu = false;
 

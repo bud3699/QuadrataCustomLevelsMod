@@ -312,6 +312,7 @@
     <Compile Include="AchievementPatches.cs" />
     <Compile Include="DirectorExtensions.cs" />
     <Compile Include="DirectorPatches.cs" />
+    <Compile Include="DiscordManagerPatches.cs" />
     <Compile Include="GameLevelData.cs" />
     <Compile Include="LayerMenuExtension.cs" />
     <Compile Include="LayerMenuPatches.cs" />
