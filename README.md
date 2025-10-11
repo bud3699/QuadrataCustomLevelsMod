@@ -40,8 +40,14 @@
    - Download the [latest pre-release of the mod](https://github.com/bud3699/QuadrataCustomLevelsMod/tags).
    - Create a `Mods` folder inside the Quadrata directory if it doesn't exist.
    - Place `CustomLevels.dll` inside `Quadrata\Mods`.
+  
 
-4. Launch the Game:
+4. Add the Mod Updater (Optional):
+   - Download the [latest pre-release of the mod Updater](https://github.com/bud3699/QuadrataCustomLevelsMod/tags).
+   - Create a `Plugins` folder inside the Quadrata directory if it doesn't exist.
+   - Place `CustomLevelsModUpdater.dll` inside `Quadrata\Plugins`.
+
+5. Launch the Game:
    - Start Quadrata normally.
    - MelonLoader should appear and confirm the mod is loaded.
 
