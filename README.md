@@ -7,7 +7,7 @@
 - [Quadrata Steam (Base Game)](https://store.steampowered.com/app/2066950/Quadrata/)
 - [Quadrata Level Editor DLC](https://store.steampowered.com/app/3676950/Quadrata_Level_Editor/)
 - [Unstripped Libraries (required for mod functionality)](https://unity.bepinex.dev/corlibs/2020.3.30.zip)
-- [MelonLoader Nightly 0.7.1](https://github.com/LavaGang/MelonLoader/releases/tag/v0.7.1)  
+- [MelonLoader Nightly 0.7.2](https://github.com/LavaGang/MelonLoader/)  
   *(Will be bundled with the repository in future releases)*
   *(Errors about scene managers are normal, the mod will still function)*
 
