@@ -76,6 +76,9 @@ namespace QuadrataPatcher
             var customLevelCodeField = AccessTools.Field(typeof(DirectorPatches), "customLevelCode");
             var toStringMethod = AccessTools.Method(typeof(object), "ToString");
             var stringEqualsMethod = AccessTools.Method(typeof(string), "Equals", new[] { typeof(string), typeof(string) });
+            var logErrorMethod = AccessTools.Method(typeof(DebugUtils), "LogError", new[] { typeof(string) });
+            var debugLogMethod = AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object) });
+            var stringConcatMethod = typeof(string).GetMethod("Concat", new[] { typeof(string), typeof(string) });
 
             /*
             if (!string.IsNullOrEmpty(customLevelCode))
@@ -89,22 +92,27 @@ namespace QuadrataPatcher
             {
                 var code = codes[i];
 
-                if (code.opcode == OpCodes.Call && code.operand is MethodInfo method && method.Name == "Log")
+                if (code.opcode == OpCodes.Call && code.operand is MethodInfo m && m == logErrorMethod)
                 {
-                    var skipLabel = new Label();
-                    code.labels.Add(skipLabel);
+                    var elseLabel = new Label();
 
-                        yield return new CodeInstruction(OpCodes.Ldsfld, gameModeField);
-                        yield return new CodeInstruction(OpCodes.Box, typeof(GameMode));
-                        yield return new CodeInstruction(OpCodes.Callvirt, toStringMethod);
-                        yield return new CodeInstruction(OpCodes.Ldstr, "3");
-                        yield return new CodeInstruction(OpCodes.Call, stringEqualsMethod);
-                        yield return new CodeInstruction(OpCodes.Brfalse, skipLabel);
+                    yield return new CodeInstruction(OpCodes.Ldsfld, gameModeField);
+                    yield return new CodeInstruction(OpCodes.Box, typeof(GameMode));
+                    yield return new CodeInstruction(OpCodes.Callvirt, toStringMethod);
+                    yield return new CodeInstruction(OpCodes.Ldstr, "3");
+                    yield return new CodeInstruction(OpCodes.Call, stringEqualsMethod);
+                    yield return new CodeInstruction(OpCodes.Brfalse_S, elseLabel);
 
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        yield return new CodeInstruction(OpCodes.Ldsfld, customLevelCodeField);
-                        yield return new CodeInstruction(OpCodes.Call, loadCustomMethod);
-                    
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Ldsfld, customLevelCodeField);
+                    yield return new CodeInstruction(OpCodes.Call, loadCustomMethod);
+
+                    yield return new CodeInstruction(OpCodes.Ldsfld, gameModeField) { labels = new List<Label> { elseLabel } };
+                    yield return new CodeInstruction(OpCodes.Box, typeof(GameMode));
+                    yield return new CodeInstruction(OpCodes.Callvirt, toStringMethod);
+                    yield return new CodeInstruction(OpCodes.Ldstr, "Unhandled game mode: ");
+                    yield return new CodeInstruction(OpCodes.Call, stringConcatMethod);
+                    yield return new CodeInstruction(OpCodes.Call, debugLogMethod);
                 }
 
                 yield return code;
