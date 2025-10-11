@@ -20,9 +20,9 @@ namespace QuadrataPatcher
             });
 
             var transpiler = AccessTools.Method(typeof(LevelManagerPatches), nameof(CollectDiamondCoroutineTranspiler));
-            var postfix = AccessTools.Method(typeof(LevelManagerPatches), nameof(CollectDiamondCoroutinePostfix));
+            var prefix = AccessTools.Method(typeof(LevelManagerPatches), nameof(CollectDiamondCoroutinePrefix));
 
-            harmony.Patch(original, transpiler: new HarmonyMethod(transpiler), postfix: new HarmonyMethod(postfix));
+            harmony.Patch(original, transpiler: new HarmonyMethod(transpiler), prefix: new HarmonyMethod(prefix));
 
         }
 
@@ -93,15 +93,16 @@ namespace QuadrataPatcher
             }
         }
 
-        [HarmonyPostfix]
-        public static void CollectDiamondCoroutinePostfix(
+        [HarmonyPrefix]
+        public static bool CollectDiamondCoroutinePrefix(
             AudioSourceSettings firstDiamond,
             AudioSourceSettings secondDiamond,
             int side,
             AudioSourceSettings success,
-            IEnumerator __result)
+            ref IEnumerator __result)
         {
-            CoroutineUtils.RunCoroutine(LevelManagerExtension.HandleGameModeLevelLoad());
+            __result = LevelManagerExtension.HandleGameModeLevelLoad(firstDiamond, secondDiamond, side, success);
+            return false;
         }
     }
 }

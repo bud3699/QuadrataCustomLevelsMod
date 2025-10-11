@@ -128,7 +128,7 @@ namespace QuadrataPatcher
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Director), "Init")]
-        public static void PostInitSetGameMode()
+        public static void PreInitSetGameMode()
         {
             if (!string.IsNullOrEmpty(customLevelCode))
             {
