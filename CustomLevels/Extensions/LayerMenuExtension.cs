@@ -230,7 +230,7 @@ public static class LayerMenuExtensions
                 inputText.alignment = TextAnchor.MiddleCenter;
                 inputText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
                 inputText.color = Color.black;
-                inputText.fontSize = 40;
+                inputText.fontSize = 30;
 
                 InputField inputField = inputObj.GetComponent<InputField>();
                 inputField.textComponent = inputText;
