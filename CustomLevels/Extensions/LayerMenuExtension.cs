@@ -236,6 +236,23 @@ public static class LayerMenuExtensions
                 inputField.textComponent = inputText;
                 inputField.text = "3MPYMS";
 
+                GameObject versionTextObj = new GameObject("ModVersionText", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+                RectTransform versionTextRect = versionTextObj.GetComponent<RectTransform>();
+                versionTextObj.transform.SetParent(menuParent, false);
+                versionTextRect.sizeDelta = new Vector2(200, 30);
+                versionTextRect.anchorMin = new Vector2(1f, 1f);
+                versionTextRect.anchorMax = new Vector2(1f, 1f);
+                versionTextRect.pivot = new Vector2(1f, 1f);
+                versionTextRect.anchoredPosition = new Vector2(-140f, -90f);
+
+                Text versionText = versionTextObj.GetComponent<Text>();
+                versionText.text = $"Current Mod Version: {Main.ModVersion}";
+                versionText.alignment = TextAnchor.MiddleRight;
+                versionText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                versionText.color = new Color(0.5f, 0.5f, 0.5f); 
+                versionText.fontSize = 14;
+
+
                 Button loadButton = loadButtonObj.GetComponent<Button>();
                 loadButton.onClick.AddListener(() =>
                 {

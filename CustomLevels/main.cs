@@ -2,16 +2,18 @@
 using HarmonyLib;
 using System.Reflection;
 
-[assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.4.0", "Bud3699")]
+[assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.4.1", "Bud3699")]
 [assembly: MelonGame("Mindlabor", "Quadrata")]
 
 namespace QuadrataPatcher
 {
     public class Main : MelonMod
     {
+        public static string ModVersion;
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg("Mod Starting!");
+            ModVersion = Info.Version;
 
             var harmony = new HarmonyLib.Harmony("com.bud3699.quadrata.patch");
             //harmony.PatchAll(Assembly.GetExecutingAssembly());
