@@ -100,15 +100,19 @@ namespace CustomLevelsModUpdater
 
                 if (name != null && name.EndsWith(".dll") && url != null)
                 {
-                    string modPath = Path.Combine(MelonEnvironment.ModsDirectory, name);
-                    MelonLogger.Msg($"Attempting to download to: {modPath}");
+                    string destinationFolder = name.Contains("Updater", StringComparison.OrdinalIgnoreCase)
+                        ? MelonEnvironment.PluginsDirectory
+                        : MelonEnvironment.ModsDirectory;
+
+                    string targetPath = Path.Combine(destinationFolder, name);
+                    MelonLogger.Msg($"Attempting to download to: {targetPath}");
 
                     try
                     {
-                        if (File.Exists(modPath))
+                        if (File.Exists(targetPath))
                         {
-                            MelonLogger.Msg($"Deleting existing file: {modPath}");
-                            File.Delete(modPath);
+                            MelonLogger.Msg($"Deleting existing file: {targetPath}");
+                            File.Delete(targetPath);
                         }
 
                         using (var client = new WebClient())
@@ -116,9 +120,8 @@ namespace CustomLevelsModUpdater
                             client.Headers.Add("User-Agent", "ModUpdater");
                             client.Headers.Add("Accept", "application/octet-stream");
 
-                            client.DownloadFile(url, modPath);
-                            MelonLogger.Msg($"Updated mod downloaded: {name}");
-                            MelonLogger.Msg("Update applied. Please restart the game to load the new version.");
+                            client.DownloadFile(url, targetPath);
+                            MelonLogger.Msg($"Updated file downloaded: {name}");
                         }
                     }
                     catch (Exception ex)
@@ -127,6 +130,9 @@ namespace CustomLevelsModUpdater
                     }
                 }
             }
+
+            MelonLogger.Msg("Update(s) applied. Please restart the game to load the new version(s).");
         }
+
     }
 }
