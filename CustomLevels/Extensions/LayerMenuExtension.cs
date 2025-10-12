@@ -113,8 +113,6 @@ public static class LayerMenuExtensions
             : openedMenuSize
         );
 
-
-
         int gameMode = (int)Traverse.Create(typeof(Director)).Field("gameMode").GetValue();
 
         for (int j = 0; j < activeButtons.Count; j++)
@@ -133,16 +131,12 @@ public static class LayerMenuExtensions
         if (gameMode != 3 && levelButtons != null)
         {
             foreach (var button in levelButtons)
-            {
                 button.gameObject.SetActive(true);
-            }
         }
         else if (levelButtons != null)
         {
             foreach (var button in levelButtons)
-            {
                 button.gameObject.SetActive(false);
-            }
         }
 
         Transform menuParent = activeButtons.Count > 0 ? activeButtons[0].rectTransform.parent : null;
@@ -198,7 +192,7 @@ public static class LayerMenuExtensions
                 borderRect.anchorMin = new Vector2(0.5f, 0.5f);
                 borderRect.anchorMax = new Vector2(0.5f, 0.5f);
                 borderRect.pivot = new Vector2(0.5f, 0.5f);
-                borderRect.sizeDelta = new Vector2(168, 68); 
+                borderRect.sizeDelta = new Vector2(168, 68);
                 borderRect.anchoredPosition = Vector2.zero;
 
                 Image borderImage = borderObj.GetComponent<Image>();
@@ -249,46 +243,56 @@ public static class LayerMenuExtensions
                 versionText.text = $"Current Mod Version: {Main.ModVersion}";
                 versionText.alignment = TextAnchor.MiddleRight;
                 versionText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-                versionText.color = new Color(0.5f, 0.5f, 0.5f); 
+                versionText.color = new Color(0.5f, 0.5f, 0.5f);
                 versionText.fontSize = 14;
-
 
                 Button loadButton = loadButtonObj.GetComponent<Button>();
                 loadButton.onClick.AddListener(() =>
                 {
-                    
                     var sandboxBtn = GameObject.FindObjectsOfType<MenuButtonSandbox>().FirstOrDefault();
-
                     var sandboxTraverse = Traverse.Create(sandboxBtn);
                     var toggleMapping = sandboxTraverse.Field("toggleMapping").GetValue<Dictionary<GameMode, (GameMode targetMode, Sprite targetIcon)>>();
 
-                    GameMode currentMode = (GameMode)Traverse.Create(typeof(Director)).Field("gameMode").GetValue();
-                    /*
-                    if (toggleMapping.TryGetValue(currentMode, out var mapping) && !(Director.gameMode == (GameMode)3)) {
-                        Debug.Log("Got value of pre: " + Director.gameMode.ToString());
-                        Director.gameMode = mapping.targetMode;
-                        Debug.Log("Got value of: " + mapping.targetMode.ToString());
-                    }
-                    */
-
-                    Director.gameMode = (GameMode)3;
-                    UIManager.instance?.menuLayer.CloseMenu();
-                    UIManager.instance?.sandboxLayer.sideButtons.Last().ResetButton();
-                    Director.instance?.StartCoroutine(WaitAndChangeSprite(sandboxBtn, toggleMapping[Director.gameMode].targetIcon));
-                    DirectorPatches.customLevelCode = inputField.text;
-                    Director.instance?.Init();
-
-                    Debug.Log($"[Patch] Loaded custom level code: {inputField.text}");
+                    Director.instance?.StartCoroutine(LoadCustomLevelCoroutine(inputField, sandboxBtn, toggleMapping));
                 });
-
 
                 Debug.Log("[Patch] Menu Load button and InputField added.");
             }
-
         }
-
 
         Debug.Log(gameMode);
         Debug.Log($"[Patch] CalculateMenuExtended executed — {(gameMode == 3 ? "vertical navigation removed" : "full navigation enabled")}.");
+    }
+
+
+    private static IEnumerator LoadCustomLevelCoroutine(InputField inputField, MenuButtonSandbox sandboxBtn, Dictionary<GameMode, (GameMode targetMode, Sprite targetIcon)> toggleMapping)
+    {
+        /*
+            if (toggleMapping.TryGetValue(currentMode, out var mapping) && !(Director.gameMode == (GameMode)3)) {
+            Debug.Log("Got value of pre: " + Director.gameMode.ToString());
+            Director.gameMode = mapping.targetMode;
+            Debug.Log("Got value of: " + mapping.targetMode.ToString());
+        }*/
+        Director.gameMode = (GameMode)3;
+        UIManager.instance?.menuLayer.CloseMenu();
+
+        LevelAnimation.isLevelLoading = true;
+        Character leftCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x < 0f);
+        Character rightCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x > 0f);
+
+        yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+        yield return new WaitForSecondsRealtime(0.2f);
+        Director.instance.CloseLevel();
+        yield return new WaitWhile(() => LevelAnimation.isLevelLoading);
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        UIManager.instance?.sandboxLayer.sideButtons.Last().ResetButton();
+        Director.instance?.StartCoroutine(WaitAndChangeSprite(sandboxBtn, toggleMapping[Director.gameMode].targetIcon));
+        DirectorPatches.customLevelCode = inputField.text;
+        Director.instance?.Init();
+
+        Debug.Log($"[Patch] Loaded custom level code: {inputField.text}");
     }
 }

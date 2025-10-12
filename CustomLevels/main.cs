@@ -2,7 +2,7 @@
 using HarmonyLib;
 using System.Reflection;
 
-[assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.4.1", "Bud3699")]
+[assembly: MelonInfo(typeof(QuadrataPatcher.Main), "Custom Levels", "0.4.2", "Bud3699")]
 [assembly: MelonGame("Mindlabor", "Quadrata")]
 
 namespace QuadrataPatcher

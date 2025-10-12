@@ -112,7 +112,7 @@ namespace QuadrataPatcher
             if (gameMode == (GameMode)3)
             {
                 Debug.Log("[Patch] Using fallback tuple for GameMode 3");
-                tuple = (0.75f, 1, false, 4.5f);
+                tuple = (0f, 1, false, 4f);
             }
             else if (SandboxStateMapping.mapping.TryGetValue(gameMode, out var mappedTuple))
             {
