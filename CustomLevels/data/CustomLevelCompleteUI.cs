@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+using System.IO;
+using System.Net;
+using System.Text;
+using System;
+
 
 namespace QuadrataPatcher
 {
     public class CustomLevelCompleteUI : MonoBehaviour
     {
+        public static string gameLevelUpload;
         public static void Show()
         {
             if (UIManager.currentLayer == null)
@@ -137,7 +144,80 @@ namespace QuadrataPatcher
 
             CreateButton("Submit", -70f, () =>
             {
-                Debug.Log($"Custom Level Upload Info:\nUsername: {usernameInput.text}\nTitle: {titleInput.text}\nDescription: {descInput.text}");
+                if (string.IsNullOrEmpty(gameLevelUpload)) { Debug.LogError("❌ gameLevelUpload is empty or null!"); return; }
+
+                GameLevelData loadedLevel;
+                try { loadedLevel = JsonUtility.FromJson<GameLevelData>(gameLevelUpload); }
+                catch (Exception e) { Debug.LogError("Failed to parse level JSON: " + e.Message); return; }
+
+                if (loadedLevel == null) { Debug.LogError("Parsed GameLevelData is null!"); return; }
+
+
+                SerializableVector2[] convertedPositions = Array.ConvertAll(
+                    loadedLevel.characterPositions,
+                    v => new SerializableVector2(v)
+                );
+
+                string charPositionsJson = "[";
+                for (int i = 0; i < convertedPositions.Length; i++)
+                {
+                    var p = convertedPositions[i];
+                    charPositionsJson += $"{{\"x\":{p.x},\"y\":{p.y}}}";
+                    if (i < convertedPositions.Length - 1)
+                        charPositionsJson += ",";
+                }
+                charPositionsJson += "]";
+
+                string entityDataEscaped = loadedLevel.entityData
+                    .Replace("\\", "\\\\")
+                    .Replace("\"", "\\\"")
+                    .Replace("\r", "\\r")
+                    .Replace("\n", "\\n");
+
+                string json =
+                    $"{{\"name\":\"{titleInput.text.Trim()}\"," +
+                    $"\"description\":\"{descInput.text.Trim()}\"," +
+                    $"\"creator\":\"{usernameInput.text.Trim()}\"," +
+                    $"\"data\":{{" +
+                    $"\"characterPositions\":{charPositionsJson}," +
+                    $"\"entityData\":\"{entityDataEscaped}\"," +
+                    $"\"moveCount\":{loadedLevel.moveCount}," +
+                    $"\"reversed\":{loadedLevel.reversed.ToString().ToLower()}" +
+                    $"}}}}";
+
+                try
+                {
+                    var request = (HttpWebRequest)WebRequest.Create("http://bud.mynetgear.com:5000/quadrata/upload");
+                    request.Method = "POST";
+                    request.ContentType = "application/json";
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(json);
+                    request.ContentLength = bytes.Length;
+
+                    using (var stream = request.GetRequestStream())
+                        stream.Write(bytes, 0, bytes.Length);
+
+                    var response = (HttpWebResponse)request.GetResponse();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string result = reader.ReadToEnd();
+                        Debug.Log("Upload successful:\n" + result);
+                    }
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Response != null)
+                    {
+                        using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                            Debug.LogError("Upload failed:\n" + reader.ReadToEnd());
+                    }
+                    else
+                    {
+                        Debug.LogError("Upload failed: " + ex.Message);
+                    }
+                }
+
+                gameLevelUpload = null;
                 Destroy(uiRoot);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
             });

@@ -29,6 +29,10 @@ namespace QuadrataPatcher
             var prefixVisuals = AccessTools.Method(typeof(DirectorPatches), nameof(InitVisualsPrefix));
             harmony.Patch(originalVisuals, prefix: new HarmonyMethod(prefixVisuals));
 
+            var originalSandboxPlay = AccessTools.Method(typeof(Director), "InitSandboxPlay");
+            var postfixSandboxPlay = AccessTools.Method(typeof(DirectorPatches), nameof(PostfixInitSandboxPlay));
+            harmony.Patch(originalSandboxPlay, postfix: new HarmonyMethod(postfixSandboxPlay));
+
         }
 
         private static void ParseCommandLineArgs()
@@ -133,9 +137,24 @@ namespace QuadrataPatcher
             if (!string.IsNullOrEmpty(customLevelCode))
             {
                 Director.gameMode = (GameMode)3;
-                Debug.Log("[Patch] ✅ Custom GameMode set to 3 via Postfix in Director.Init");
+                Debug.Log("[Patch] Custom GameMode set to 3 via Postfix in Director.Init");
             }
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Director), "InitSandboxPlay")]
+        public static void PostfixInitSandboxPlay(Director __instance)
+        {
+            if (__instance.editingGameLevel != null)
+            {
+                CustomLevelCompleteUI.gameLevelUpload = JsonUtility.ToJson(__instance.editingGameLevel);
+            }
+            else
+            {
+                Debug.LogWarning("[Patch] editingGameLevel is null; cannot serialize.");
+            }
+        }
+
 
 
 
