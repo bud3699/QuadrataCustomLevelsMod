@@ -40,6 +40,10 @@ namespace QuadrataPatcher
 
             Finder.allCharacters.ToList().ForEach(c => c.MakeUninteractable());
 
+            if (Director.gameMode == GameMode.SandboxPlay)
+            {
+                Debug.Log("Finished Custom Level");
+            }
             if (Director.gameMode == GameMode.Game || Director.gameMode.ToString() == "3")
             {
                 int levelIndex = traverse.Field("levelIndex").GetValue<int>();
@@ -62,7 +66,7 @@ namespace QuadrataPatcher
                 {
                     CoroutineUtils.RunCoroutine(LevelManager.LoadLevel(levelIndex + 1));
                 }
-                else
+                else if (Director.gameMode.ToString() == "3")
                 {
                     CoroutineUtils.RunCoroutine(LevelManager.LoadLevel(levelIndex));
                     Debug.Log("Load Finished screen here ??? Load something here to say you've completed it.. for now just reload level..");
