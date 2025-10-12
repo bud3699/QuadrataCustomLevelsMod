@@ -43,6 +43,7 @@ namespace QuadrataPatcher
             if (Director.gameMode == GameMode.SandboxPlay)
             {
                 Debug.Log("Finished Custom Level");
+                CustomLevelCompleteUI.Show();
             }
             if (Director.gameMode == GameMode.Game || Director.gameMode.ToString() == "3")
             {
