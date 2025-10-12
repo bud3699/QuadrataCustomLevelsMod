@@ -274,6 +274,7 @@ public static class LayerMenuExtensions
             Debug.Log("Got value of: " + mapping.targetMode.ToString());
         }*/
         Director.gameMode = (GameMode)3;
+        DiscordManagerPatches.LevelCodeDiscord = null;
         UIManager.instance?.menuLayer.CloseMenu();
 
         LevelAnimation.isLevelLoading = true;

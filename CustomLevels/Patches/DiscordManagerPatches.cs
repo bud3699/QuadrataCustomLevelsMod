@@ -40,9 +40,16 @@ public static class DiscordManagerPatches
         {
             stateText = "Level Editor";
         }
-        if (Director.gameMode.ToString() == "3") 
+        if (Director.gameMode.ToString() == "3")
         {
-            stateText = $"Playing Custom Level: {LevelCodeDiscord}" ;
+            if (string.IsNullOrEmpty(LevelCodeDiscord))
+            {
+                stateText = "Loading Custom Level...";
+            }
+            else
+            {
+                stateText = $"Playing Custom Level: {LevelCodeDiscord}";
+            }
         }
         if (LevelManager.levelIndex == 0)
         {
