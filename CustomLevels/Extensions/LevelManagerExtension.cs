@@ -68,7 +68,10 @@ namespace QuadrataPatcher
                 }
                 else if (Director.gameMode.ToString() == "3")
                 {
-                    CoroutineUtils.RunCoroutine(LevelManager.LoadLevel(levelIndex));
+                    Director.instance.CloseLevel();
+                    yield return new WaitWhile(() => LevelAnimation.isLevelLoading);
+                    yield return new WaitForSecondsRealtime(0.1f);
+                    Director.instance?.Init();
                     Debug.Log("Load Finished screen here ??? Load something here to say you've completed it.. for now just reload level..");
                 }
             }
