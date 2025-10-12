@@ -281,10 +281,13 @@ public static class LayerMenuExtensions
         Character leftCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x < 0f);
         Character rightCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x > 0f);
 
-        yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
-        yield return new WaitForSecondsRealtime(0.1f);
-        yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
-        yield return new WaitForSecondsRealtime(0.2f);
+        if (leftCharacter != null && rightCharacter != null)
+        {
+            yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+            yield return new WaitForSecondsRealtime(0.1f);
+            yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+            yield return new WaitForSecondsRealtime(0.2f);
+        }
         Director.instance.CloseLevel();
         yield return new WaitWhile(() => LevelAnimation.isLevelLoading);
         yield return new WaitForSecondsRealtime(0.1f);
