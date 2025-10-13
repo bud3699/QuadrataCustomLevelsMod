@@ -43,6 +43,16 @@ namespace QuadrataPatcher
             if (Director.gameMode == GameMode.SandboxPlay)
             {
                 Debug.Log("Finished Custom Level");
+                Character leftCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x < 0f);
+                Character rightCharacter = Finder.allCharacters.FirstOrDefault(c => c.transform.position.x > 0f);
+
+                if (leftCharacter != null && rightCharacter != null)
+                {
+                    yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+                    yield return new WaitForSecondsRealtime(0.1f);
+                    yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
+                    yield return new WaitForSecondsRealtime(0.2f);
+                }
                 CustomLevelCompleteUI.Show();
             }
             if (Director.gameMode == GameMode.Game || Director.gameMode.ToString() == "3")
