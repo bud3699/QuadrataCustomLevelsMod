@@ -201,7 +201,7 @@ namespace QuadrataPatcher
 
                 try
                 {
-                    var request = (HttpWebRequest)WebRequest.Create("http://bud.mynetgear.com:5000/quadrata/upload");
+                    var request = (HttpWebRequest)WebRequest.Create("https://bud.mynetgear.com/quadrata/upload");
                     request.Method = "POST";
                     request.ContentType = "application/json";
 
