@@ -19,9 +19,22 @@ namespace QuadrataPatcher
                 Debug.LogWarning("No active UI layer found.");
                 return;
             }
+            var blocker = new GameObject("RaycastBlocker");
+            blocker.transform.SetParent(UIManager.currentLayer.transform, false);
+
+            var blockerRect = blocker.AddComponent<RectTransform>();
+            blockerRect.anchorMin = Vector2.zero;
+            blockerRect.anchorMax = Vector2.one;
+            blockerRect.pivot = new Vector2(0.5f, 0.5f);
+            blockerRect.localPosition = Vector3.zero;
+            blockerRect.localScale = Vector3.one;
+            blockerRect.sizeDelta = Vector2.zero;
+
+            var blockerImage = blocker.AddComponent<Image>();
+            blockerImage.color = new Color(0, 0, 0, 0.001f);
 
             var uiRoot = new GameObject("CustomLevelCompleteUI");
-            uiRoot.transform.SetParent(UIManager.currentLayer.transform, false);
+            uiRoot.transform.SetParent(blocker.transform, false);
 
             var bg = uiRoot.AddComponent<Image>();
             bg.color = new Color(0f, 0f, 0f, 0.6f);
@@ -152,7 +165,6 @@ namespace QuadrataPatcher
 
                 if (loadedLevel == null) { Debug.LogError("Parsed GameLevelData is null!"); return; }
 
-
                 SerializableVector2[] convertedPositions = Array.ConvertAll(
                     loadedLevel.characterPositions,
                     v => new SerializableVector2(v)
@@ -218,14 +230,14 @@ namespace QuadrataPatcher
                 }
 
                 gameLevelUpload = null;
-                Destroy(uiRoot);
+                Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
             });
 
             CreateButton("Cancel", -120f, () =>
             {
                 Debug.Log("Custom level upload canceled.");
-                Destroy(uiRoot);
+                Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
             });
         }
