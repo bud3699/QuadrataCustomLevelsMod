@@ -15,6 +15,7 @@ namespace QuadrataPatcher
         public static void Show()
         {
             UIManager.isMenuMoving = true;
+            LevelAnimation.isLevelLoading = true;
             if (UIManager.currentLayer == null)
             {
                 Debug.LogWarning("No active UI layer found.");
@@ -234,6 +235,7 @@ namespace QuadrataPatcher
                 Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
                 UIManager.isMenuMoving = false;
+                LevelAnimation.isLevelLoading = false;
             });
 
             CreateButton("Cancel", -120f, () =>
@@ -242,6 +244,7 @@ namespace QuadrataPatcher
                 Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
                 UIManager.isMenuMoving = false;
+                LevelAnimation.isLevelLoading = false;
             });
         }
     }
