@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System;
+using static MonoMod.InlineRT.MonoModRule;
 
 
 namespace QuadrataPatcher
@@ -121,6 +122,7 @@ namespace QuadrataPatcher
             var usernameInput = CreateInput("Username", 80f);
             var titleInput = CreateInput("Level Title", 30f);
             var descInput = CreateInput("Level Description", -20f);
+            usernameInput.text = SaveManagerCustom.CurrentData.playerName;
 
             GameObject CreateButton(string label, float yOffset, UnityEngine.Events.UnityAction onClick)
             {
@@ -159,6 +161,7 @@ namespace QuadrataPatcher
 
             CreateButton("Submit", -70f, () =>
             {
+                if (SaveManagerCustom.CurrentData.playerName != usernameInput.text.Trim()) SaveManagerCustom.UpdatePlayerName(usernameInput.text.Trim());
                 if (string.IsNullOrEmpty(gameLevelUpload)) { Debug.LogError("❌ gameLevelUpload is empty or null!"); return; }
 
                 GameLevelData loadedLevel;

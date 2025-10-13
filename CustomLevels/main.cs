@@ -52,6 +52,9 @@ namespace QuadrataPatcher
             {
                 MelonLogger.Msg("Continuing with regular boot ");
             }
+
+            SaveManagerCustom.InitializeSave();
+            MelonLogger.Msg("Initialized CustomSaveManager");
         }
     }
 }
