@@ -14,6 +14,7 @@ namespace QuadrataPatcher
         public static string gameLevelUpload;
         public static void Show()
         {
+            UIManager.isMenuMoving = true;
             if (UIManager.currentLayer == null)
             {
                 Debug.LogWarning("No active UI layer found.");
@@ -232,6 +233,7 @@ namespace QuadrataPatcher
                 gameLevelUpload = null;
                 Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                UIManager.isMenuMoving = false;
             });
 
             CreateButton("Cancel", -120f, () =>
@@ -239,6 +241,7 @@ namespace QuadrataPatcher
                 Debug.Log("Custom level upload canceled.");
                 Destroy(blocker);
                 UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                UIManager.isMenuMoving = false;
             });
         }
     }
