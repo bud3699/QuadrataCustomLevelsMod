@@ -80,7 +80,6 @@
     </Reference>
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quadrata\Quadrata_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quadrata\Quadrata_Data\Managed\DOTween.dll</HintPath>
@@ -145,6 +144,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Quadrata\MelonLoader\net35\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Steamworks.NET, Version=20.2.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\GlobalReference\Steamworks.NET.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
+      <Aliases>SteamworksNetUnstripped</Aliases>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration">
@@ -311,6 +317,7 @@
   <ItemGroup>
     <Compile Include="data\CustomLevelCompleteUI.cs" />
     <Compile Include="data\CustomSaveManager.cs" />
+    <Compile Include="data\SteamworksManager.cs" />
     <Compile Include="Extensions\LevelManagerExtension.cs" />
     <Compile Include="Patches\AchievementPatches.cs" />
     <Compile Include="Extensions\DirectorExtensions.cs" />

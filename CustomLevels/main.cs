@@ -15,6 +15,12 @@ namespace QuadrataPatcher
             MelonLogger.Msg("Mod Starting!");
             ModVersion = Info.Version;
 
+
+            SaveManagerCustom.InitializeSave();
+            MelonLogger.Msg("Initialized CustomSaveManager");
+
+            SteamworksManager.Initialize();
+
             var harmony = new HarmonyLib.Harmony("com.bud3699.quadrata.patch");
             //harmony.PatchAll(Assembly.GetExecutingAssembly());
             MelonLogger.Msg("Harmony initialized!");
@@ -52,9 +58,6 @@ namespace QuadrataPatcher
             {
                 MelonLogger.Msg("Continuing with regular boot ");
             }
-
-            SaveManagerCustom.InitializeSave();
-            MelonLogger.Msg("Initialized CustomSaveManager");
         }
     }
 }
