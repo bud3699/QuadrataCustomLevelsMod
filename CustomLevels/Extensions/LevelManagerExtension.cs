@@ -53,7 +53,7 @@ namespace QuadrataPatcher
                     yield return new WaitWhile(() => leftCharacter.moving || rightCharacter.moving);
                     yield return new WaitForSecondsRealtime(0.2f);
                 }
-                CustomLevelCompleteUI.Show();
+                if(SteamworksManager.IsCool) { CustomLevelCompleteUI.Show(); }
             }
             if (Director.gameMode == GameMode.Game || Director.gameMode.ToString() == "3")
             {

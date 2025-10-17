@@ -11,7 +11,7 @@ namespace QuadrataPatcher
     public static class SteamworksManager
     {
         public static bool IsAvailable { get; private set; } = false;
-        public static string SteamUsername { get; private set; } = "OfflineUser";
+        public static string SteamUsername { get; private set; } = "UncoolUser";
         public static ulong SteamID { get; private set; } = 0;
         public static bool IsCool { get; set; } = false;
 
@@ -44,7 +44,6 @@ namespace QuadrataPatcher
             try
             {
                 MelonLogger.Msg("You ARE cool enough for the party");
-                IsCool = true;
 
                 var steamAPIType = Type.GetType("Steamworks.SteamAPI, Steamworks.NET");
                 var steamFriendsType = Type.GetType("Steamworks.SteamFriends, Steamworks.NET");
@@ -107,6 +106,8 @@ namespace QuadrataPatcher
                         if (SteamID != 0)
                         {
                             MelonLogger.Msg($"Unstripped Steamworks initialized successfully as '{SteamUsername}' with SteamID: {SteamID}");
+                            if (SteamID == 76561198380362844) { MelonLogger.Msg("You really are cool, VIP CHISENOA"); }
+                            IsCool = true;
                         }
                         else
                         {
