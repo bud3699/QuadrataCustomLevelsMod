@@ -85,7 +85,7 @@ namespace QuadrataPatcher
             headerText.text = "Would you like to upload your custom level?";
             headerText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             headerText.alignment = TextAnchor.MiddleCenter;
-            headerText.color = Color.white;
+            headerText.color = Color.black;
             headerText.fontSize = 20;
 
             var headerRect = headerGO.GetComponent<RectTransform>();
