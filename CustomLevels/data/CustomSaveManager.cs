@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 
 [Serializable]
@@ -198,5 +199,16 @@ public static class SaveManagerCustom
     public static bool SaveExists()
     {
         return File.Exists(savePath);
+    }
+
+    public static string SignData(string data, string privateKeyXml)
+    {
+        using (var rsa = new RSACryptoServiceProvider())
+        {
+            rsa.FromXmlString(privateKeyXml);
+            var dataBytes = Encoding.UTF8.GetBytes(data);
+            var signedBytes = rsa.SignData(dataBytes, CryptoConfig.MapNameToOID("SHA256"));
+            return Convert.ToBase64String(signedBytes);
+        }
     }
 }

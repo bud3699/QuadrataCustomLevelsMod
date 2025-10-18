@@ -223,12 +223,19 @@ namespace QuadrataPatcher
                     $"{{\"name\":\"{titleInput.text.Trim()}\"," +
                     $"\"description\":\"{descInput.text.Trim()}\"," +
                     $"\"creator\":\"{SteamworksManager.GetSteamUsername().Trim()}\"," +
+                    $"\"SteamID\":\"{SteamworksManager.SteamID.ToString().Trim()}\"," +
                     $"\"data\":{{" +
                     $"\"characterPositions\":{charPositionsJson}," +
                     $"\"entityData\":\"{entityDataEscaped}\"," +
                     $"\"moveCount\":{loadedLevel.moveCount}," +
                     $"\"reversed\":{loadedLevel.reversed.ToString().ToLower()}" +
                     $"}}}}";
+
+                string signature = SaveManagerCustom.SignData(json, SaveManagerCustom.CurrentData.privateKey);
+                string finalJson =
+                    $"{{\"payload\":{json}," +
+                    $"\"publicKey\":\"{SaveManagerCustom.CurrentData.publicKey}\"," +
+                    $"\"signature\":\"{signature}\"}}";
 
                 try
                 {
