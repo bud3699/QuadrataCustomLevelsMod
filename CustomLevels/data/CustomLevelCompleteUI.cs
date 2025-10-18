@@ -250,6 +250,26 @@ namespace QuadrataPatcher
                     {
                         string result = reader.ReadToEnd();
                         Debug.Log("Upload successful:\n" + result);
+
+                        string levelCode = "Unknown";
+                        try
+                        {
+                            var responseObj = JsonUtility.FromJson<UploadResponse>(result);
+                            levelCode = responseObj.code;
+                        }
+                        catch
+                        {
+                            Debug.LogWarning("Could not parse response code.");
+                        }
+
+                        rootRect.DOScale(Vector2.zero, 0.25f)
+                            .SetEase(Ease.InBack)
+                            .SetDelay(0.1f)
+                            .OnComplete(() =>
+                            {
+                                ShowSuccessPopup(levelCode, blocker);
+                            })
+                            .Play();
                     }
                 }
                 catch (WebException ex)
@@ -264,19 +284,10 @@ namespace QuadrataPatcher
                         Debug.LogError("Upload failed: " + ex.Message);
                     }
                 }
+
                 gameLevelUpload = null;
-                rootRect.DOScale(Vector2.zero, 0.25f)
-                    .SetEase(Ease.InBack)
-                    .SetDelay(0.1f)
-                    .OnComplete(() =>
-                    {
-                        Destroy(blocker);
-                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
-                        UIManager.isMenuMoving = false;
-                        LevelAnimation.isLevelLoading = false;
-                    })
-                    .Play();
             });
+
 
             CreateButton("Cancel", -120f, () =>
             {
@@ -292,9 +303,110 @@ namespace QuadrataPatcher
                         LevelAnimation.isLevelLoading = false;
                     })
                     .Play();
-
-                //ChangeButtonSize(rootRect, Vector2.zero, 0.25f, Ease.InBack, 0.1f);
             });
+        }
+
+        [Serializable]
+        public class UploadResponse
+        {
+            public string code;
+            public string id;
+        }
+
+        private static void ShowSuccessPopup(string code, GameObject parent)
+        {
+            var popupGO = new GameObject("UploadSuccessPopup");
+            popupGO.transform.SetParent(parent.transform, false);
+            var rect = popupGO.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(300, 200);
+            rect.localScale = Vector3.zero;
+
+            var bg = popupGO.AddComponent<Image>();
+            bg.color = new Color(0, 0, 0, 0.0f);
+
+            Sprite menuSprite = Resources.FindObjectsOfTypeAll<Sprite>().FirstOrDefault(s => s.name == "Menu");
+            if (menuSprite != null)
+            {
+                var menuGO = new GameObject("MenuPanel");
+                menuGO.transform.SetParent(popupGO.transform, false);
+                menuGO.transform.SetAsFirstSibling();
+
+                var image = menuGO.AddComponent<Image>();
+                image.sprite = menuSprite;
+                image.type = Image.Type.Sliced;
+                image.color = Color.white;
+
+                var rect2 = image.rectTransform;
+                rect2.anchorMin = new Vector2(0.5f, 0.5f);
+                rect2.anchorMax = new Vector2(0.5f, 0.5f);
+                rect2.pivot = new Vector2(0.5f, 0.5f);
+                rect2.localPosition = Vector3.zero;
+                rect2.localScale = Vector3.one;
+                rect2.sizeDelta = new Vector2(300, 200);
+            }
+
+
+
+            var textGO = new GameObject("Message");
+            textGO.transform.SetParent(popupGO.transform, false);
+            var text = textGO.AddComponent<Text>();
+            text.text = $"Upload Successful!\n\nLevel Code: {code}";
+            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.black;
+            text.fontSize = 22;
+
+            var textRect = textGO.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.sizeDelta = Vector2.zero;
+            var closeButtonGO = new GameObject("CloseButton");
+            closeButtonGO.transform.SetParent(popupGO.transform, false);
+
+            var closeBtn = closeButtonGO.AddComponent<Button>();
+            var closeImg = closeButtonGO.AddComponent<Image>();
+            closeImg.color = Color.white;
+
+            var closeRect = closeButtonGO.GetComponent<RectTransform>();
+            closeRect.anchorMin = new Vector2(1, 1);
+            closeRect.anchorMax = new Vector2(1, 1);
+            closeRect.pivot = new Vector2(1, 1);
+            closeRect.sizeDelta = new Vector2(30, 30);
+            closeRect.anchoredPosition = new Vector2(-10, -10);
+
+            var closeTextGO = new GameObject("Text");
+            closeTextGO.transform.SetParent(closeButtonGO.transform, false);
+            var closeText = closeTextGO.AddComponent<Text>();
+            closeText.text = "✖";
+            closeText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            closeText.alignment = TextAnchor.MiddleCenter;
+            closeText.color = Color.black;
+            closeText.fontSize = 20;
+
+            var closeTextRect = closeTextGO.GetComponent<RectTransform>();
+            closeTextRect.anchorMin = Vector2.zero;
+            closeTextRect.anchorMax = Vector2.one;
+            closeTextRect.sizeDelta = Vector2.zero;
+
+            closeBtn.onClick.AddListener(() =>
+            {
+                rect.DOScale(Vector2.zero, 0.25f)
+                    .SetEase(Ease.InBack)
+                    .OnComplete(() =>
+                    {
+                        Destroy(parent);
+                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                        UIManager.isMenuMoving = false;
+                        LevelAnimation.isLevelLoading = false;
+                    })
+                    .Play();
+            });
+
+
+            rect.DOScale(Vector2.one, 0.3f).SetEase(Ease.OutBack).Play();
         }
     }
 }
