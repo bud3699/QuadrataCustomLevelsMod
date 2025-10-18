@@ -318,6 +318,7 @@
     <Compile Include="data\CustomLevelCompleteUI.cs" />
     <Compile Include="data\CustomSaveManager.cs" />
     <Compile Include="data\SteamworksManager.cs" />
+    <Compile Include="data\UIController.cs" />
     <Compile Include="Extensions\LevelManagerExtension.cs" />
     <Compile Include="Patches\AchievementPatches.cs" />
     <Compile Include="Extensions\DirectorExtensions.cs" />

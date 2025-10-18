@@ -15,10 +15,6 @@ namespace QuadrataPatcher
     public class CustomLevelCompleteUI : MonoBehaviour
     {
         public static string gameLevelUpload;
-        public static void ChangeButtonSize(Transform rectTransform, Vector2 target, float time = 0f, Ease ease = Ease.Linear, float delay = 0f)
-        {
-            rectTransform.DOScale(target, time).SetEase(ease).SetDelay(delay).Play();
-        }
         public static void Show()
         {
             UIManager.isMenuMoving = true;
@@ -77,7 +73,7 @@ namespace QuadrataPatcher
             rootRect.localPosition = Vector3.zero;
             rootRect.localScale = Vector3.zero;
 
-            ChangeButtonSize(rootRect, Vector2.one, 0.25f, Ease.InBack, 0.1f);
+            UIController.ChangeButtonSize(rootRect, Vector2.one, 0.25f, Ease.InBack, 0.1f);
 
             var headerGO = new GameObject("HeaderText");
             headerGO.transform.SetParent(uiRoot.transform, false);
