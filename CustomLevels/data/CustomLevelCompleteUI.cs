@@ -6,6 +6,8 @@ using System.Net;
 using System.Text;
 using System;
 using static MonoMod.InlineRT.MonoModRule;
+using System.Linq;
+using DG.Tweening;
 
 
 namespace QuadrataPatcher
@@ -13,6 +15,10 @@ namespace QuadrataPatcher
     public class CustomLevelCompleteUI : MonoBehaviour
     {
         public static string gameLevelUpload;
+        public static void ChangeButtonSize(Transform rectTransform, Vector2 target, float time = 0f, Ease ease = Ease.Linear, float delay = 0f)
+        {
+            rectTransform.DOScale(target, time).SetEase(ease).SetDelay(delay).Play();
+        }
         public static void Show()
         {
             UIManager.isMenuMoving = true;
@@ -42,12 +48,36 @@ namespace QuadrataPatcher
             var bg = uiRoot.AddComponent<Image>();
             bg.color = new Color(0f, 0f, 0f, 0.6f);
 
+            Sprite menuSprite = Resources.FindObjectsOfTypeAll<Sprite>().FirstOrDefault(s => s.name == "Menu");
+            if (menuSprite != null)
+            {
+                var menuGO = new GameObject("MenuPanel");
+                menuGO.transform.SetParent(uiRoot.transform, false);
+                menuGO.transform.SetAsFirstSibling();
+
+                var image = menuGO.AddComponent<Image>();
+                image.sprite = menuSprite;
+                image.type = Image.Type.Sliced;
+                image.color = Color.white;
+
+                var rect = image.rectTransform;
+                rect.anchorMin = new Vector2(0.5f, 0.5f);
+                rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.localPosition = Vector3.zero;
+                rect.localScale = Vector3.one;
+                rect.sizeDelta = new Vector2(600, 400);
+            }
+
             var rootRect = uiRoot.GetComponent<RectTransform>();
             rootRect.anchorMin = new Vector2(0.5f, 0.5f);
             rootRect.anchorMax = new Vector2(0.5f, 0.5f);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
             rootRect.sizeDelta = new Vector2(500, 400);
             rootRect.localPosition = Vector3.zero;
+            rootRect.localScale = Vector3.zero;
+
+            ChangeButtonSize(rootRect, Vector2.one, 0.25f, Ease.InBack, 0.1f);
 
             var headerGO = new GameObject("HeaderText");
             headerGO.transform.SetParent(uiRoot.transform, false);
@@ -233,21 +263,36 @@ namespace QuadrataPatcher
                         Debug.LogError("Upload failed: " + ex.Message);
                     }
                 }
-
                 gameLevelUpload = null;
-                Destroy(blocker);
-                UIManager.currentLayer = UIManager.instance.sandboxLayer;
-                UIManager.isMenuMoving = false;
-                LevelAnimation.isLevelLoading = false;
+                rootRect.DOScale(Vector2.zero, 0.25f)
+                    .SetEase(Ease.InBack)
+                    .SetDelay(0.1f)
+                    .OnComplete(() =>
+                    {
+                        Destroy(blocker);
+                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                        UIManager.isMenuMoving = false;
+                        LevelAnimation.isLevelLoading = false;
+                    })
+                    .Play();
             });
 
             CreateButton("Cancel", -120f, () =>
             {
                 Debug.Log("Custom level upload canceled.");
-                Destroy(blocker);
-                UIManager.currentLayer = UIManager.instance.sandboxLayer;
-                UIManager.isMenuMoving = false;
-                LevelAnimation.isLevelLoading = false;
+                rootRect.DOScale(Vector2.zero, 0.25f)
+                    .SetEase(Ease.InBack)
+                    .SetDelay(0.1f)
+                    .OnComplete(() =>
+                    {
+                        Destroy(blocker);
+                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                        UIManager.isMenuMoving = false;
+                        LevelAnimation.isLevelLoading = false;
+                    })
+                    .Play();
+
+                //ChangeButtonSize(rootRect, Vector2.zero, 0.25f, Ease.InBack, 0.1f);
             });
         }
     }
