@@ -149,10 +149,8 @@ namespace QuadrataPatcher
                 return input;
             }
 
-            var usernameInput = CreateInput("Username", 80f);
             var titleInput = CreateInput("Level Title", 30f);
             var descInput = CreateInput("Level Description", -20f);
-            usernameInput.text = SaveManagerCustom.CurrentData.playerName;
 
             GameObject CreateButton(string label, float yOffset, UnityEngine.Events.UnityAction onClick)
             {
@@ -191,7 +189,7 @@ namespace QuadrataPatcher
 
             CreateButton("Submit", -70f, () =>
             {
-                if (SaveManagerCustom.CurrentData.playerName != usernameInput.text.Trim()) SaveManagerCustom.UpdatePlayerName(usernameInput.text.Trim());
+                if (SaveManagerCustom.CurrentData.playerName != SteamworksManager.GetSteamUsername().Trim()) SaveManagerCustom.UpdatePlayerName(SteamworksManager.GetSteamUsername().Trim());
                 if (string.IsNullOrEmpty(gameLevelUpload)) { Debug.LogError("❌ gameLevelUpload is empty or null!"); return; }
 
                 GameLevelData loadedLevel;
@@ -224,7 +222,7 @@ namespace QuadrataPatcher
                 string json =
                     $"{{\"name\":\"{titleInput.text.Trim()}\"," +
                     $"\"description\":\"{descInput.text.Trim()}\"," +
-                    $"\"creator\":\"{usernameInput.text.Trim()}\"," +
+                    $"\"creator\":\"{SteamworksManager.GetSteamUsername().Trim()}\"," +
                     $"\"data\":{{" +
                     $"\"characterPositions\":{charPositionsJson}," +
                     $"\"entityData\":\"{entityDataEscaped}\"," +
