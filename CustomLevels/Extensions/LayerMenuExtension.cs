@@ -11,6 +11,12 @@ using UnityEngine.UI;
 
 public static class LayerMenuExtensions
 {
+
+    public static GameObject loadButtonObj;
+    public static InputField inputField;
+    public static GameObject versionTextObj;
+    public static GameObject borderObj;
+
     private static IEnumerator WaitAndChangeSprite(MenuButtonSandbox sandboxBtn, Sprite sprite)
     {
         yield return new WaitWhile(() => UIManager.isMenuMoving);
@@ -155,7 +161,7 @@ public static class LayerMenuExtensions
 
             if (!alreadyExists)
             {
-                GameObject loadButtonObj = new GameObject("MenuLoadButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+                loadButtonObj = new GameObject("MenuLoadButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
                 RectTransform loadButtonRect = loadButtonObj.GetComponent<RectTransform>();
                 loadButtonObj.transform.SetParent(menuParent, false);
                 loadButtonRect.sizeDelta = new Vector2(70, 60);
@@ -186,7 +192,7 @@ public static class LayerMenuExtensions
                 wrapperRect.pivot = new Vector2(1f, 1f);
                 wrapperRect.anchoredPosition = new Vector2(-140f, -30f);
 
-                GameObject borderObj = new GameObject("Border", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                borderObj = new GameObject("Border", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
                 RectTransform borderRect = borderObj.GetComponent<RectTransform>();
                 borderObj.transform.SetParent(inputWrapper.transform, false);
                 borderRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -226,11 +232,11 @@ public static class LayerMenuExtensions
                 inputText.color = Color.black;
                 inputText.fontSize = 30;
 
-                InputField inputField = inputObj.GetComponent<InputField>();
+                inputField = inputObj.GetComponent<InputField>();
                 inputField.textComponent = inputText;
                 inputField.text = "3MPYMS";
 
-                GameObject versionTextObj = new GameObject("ModVersionText", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+                versionTextObj = new GameObject("ModVersionText", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
                 RectTransform versionTextRect = versionTextObj.GetComponent<RectTransform>();
                 versionTextObj.transform.SetParent(menuParent, false);
                 versionTextRect.sizeDelta = new Vector2(200, 30);

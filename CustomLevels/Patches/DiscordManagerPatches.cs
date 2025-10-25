@@ -6,12 +6,35 @@ using UnityEngine;
 
 public static class DiscordManagerPatches
 {
-    public static string LevelCodeDiscord; 
+    public static string LevelCodeDiscord;
     public static void ApplyPatch(HarmonyLib.Harmony harmony)
     {
-        var original = AccessTools.Method(typeof(DiscordManager), "FixedUpdate");
-        var prefix = AccessTools.Method(typeof(DiscordManagerPatches), nameof(FixedUpdatePrefix));
-        harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+        var originalFixedUpdate = AccessTools.Method(typeof(DiscordManager), "FixedUpdate");
+        var prefixFixedUpdate = AccessTools.Method(typeof(DiscordManagerPatches), nameof(FixedUpdatePrefix));
+        harmony.Patch(originalFixedUpdate, prefix: new HarmonyMethod(prefixFixedUpdate));
+
+        var originalCreatePresence = AccessTools.Method(typeof(DiscordManager), "CreatePresence");
+        var prefixCreatePresence = AccessTools.Method(typeof(DiscordManagerPatches), nameof(CreatePresencePrefix));
+        harmony.Patch(originalCreatePresence, prefix: new HarmonyMethod(prefixCreatePresence));
+    }
+
+    public static bool CreatePresencePrefix(DiscordManager __instance)
+    {
+        try
+        {
+            var discord = new global::Discord.Discord(1431736823100608655, 1uL);
+            var activityManager = discord.GetActivityManager();
+
+            AccessTools.Field(typeof(DiscordManager), "discord").SetValue(__instance, discord);
+            AccessTools.Field(typeof(DiscordManager), "activityManager").SetValue(__instance, activityManager);
+            AccessTools.Field(typeof(DiscordManager), "hasStarted").SetValue(__instance, true);
+        }
+        catch (ResultException)
+        {
+            AccessTools.Field(typeof(DiscordManager), "hasErrored").SetValue(__instance, true);
+        }
+
+        return false;
     }
 
     public static bool FixedUpdatePrefix(DiscordManager __instance)

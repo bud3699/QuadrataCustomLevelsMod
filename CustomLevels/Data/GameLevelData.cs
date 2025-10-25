@@ -1,14 +1,26 @@
 ﻿using System;
 using UnityEngine;
 
-namespace QuadrataPatcher
+[Serializable]
+public class SerializableVector2
 {
-    [Serializable]
-    public class GameLevelData
+    public float x;
+    public float y;
+
+    public SerializableVector2() { }
+
+    public SerializableVector2(Vector2 v)
     {
-        public Vector2[] characterPositions = new Vector2[2];
-        public string entityData = "";
-        public int moveCount = 5;
-        public bool reversed;
+        x = v.x;
+        y = v.y;
     }
+}
+
+[Serializable]
+public class GameLevelData
+{
+    public Vector2[] characterPositions;
+    public string entityData;
+    public int moveCount;
+    public bool reversed;
 }

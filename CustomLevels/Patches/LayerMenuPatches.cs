@@ -4,6 +4,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Reflection;
+using UnityEngine.InputSystem;
 
 namespace QuadrataPatcher
 {
@@ -25,6 +26,31 @@ namespace QuadrataPatcher
             __instance.CalculateMenuExtended();
             return false;
         }
+
+        [HarmonyPatch(typeof(LayerMenu), "OpenMenu")]
+        [HarmonyPostfix]
+        public static void Postfix_LayerMenu_OpenMenu(LayerMenu __instance, InputAction.CallbackContext ctx)
+        {
+            Debug.Log("Opening Menu");
+            UIController.DelayedTweenMenuElements(Director.instance, true, 0.8f, 0.3f,
+                LayerMenuExtensions.loadButtonObj?.transform,
+                LayerMenuExtensions.inputField?.transform,
+                LayerMenuExtensions.versionTextObj?.transform,
+                LayerMenuExtensions.borderObj?.transform);
+        }
+
+        [HarmonyPatch(typeof(LayerMenu), "CloseMenu")]
+        [HarmonyPostfix]
+        public static void Postfix_LayerMenu_CloseMenu(LayerMenu __instance)
+        {
+            UIController.DelayedTweenMenuElements(Director.instance, false, 0.2f, 0.3f,
+                LayerMenuExtensions.loadButtonObj?.transform,
+                LayerMenuExtensions.inputField?.transform,
+                LayerMenuExtensions.versionTextObj?.transform,
+                LayerMenuExtensions.borderObj?.transform);
+        }
+
+
 
         public static void ApplyPatch(HarmonyLib.Harmony harmony)
         {

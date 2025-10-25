@@ -51,6 +51,7 @@ namespace QuadrataPatcher
 
             object gameLevel;
             levelBuilder.InitCustomLevelFromCode(LevelCode, out gameLevel);
+            CustomLevelCompleteUI.gameLevelUpload = JsonUtility.ToJson(gameLevel); 
 
             if (gameLevel == null)
             {
