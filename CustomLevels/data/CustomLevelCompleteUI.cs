@@ -235,11 +235,11 @@ namespace QuadrataPatcher
 
                 try
                 {
-                    var request = (HttpWebRequest)WebRequest.Create("https://bud.mynetgear.com/quadrata/upload");
+                    var request = (HttpWebRequest)WebRequest.Create("https://bud.mynetgear.com/quadrata/api/levels");
                     request.Method = "POST";
                     request.ContentType = "application/json";
 
-                    byte[] bytes = Encoding.UTF8.GetBytes(json);
+                    byte[] bytes = Encoding.UTF8.GetBytes(finalJson);
                     request.ContentLength = bytes.Length;
 
                     using (var stream = request.GetRequestStream())
