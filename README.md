@@ -11,6 +11,10 @@
   *(Will be bundled with the repository in future releases)*
   *(Errors about scene managers are normal, the mod will still function)*
 
+  - *(Optional for level upload)* [Steamworks.NET Unstripped Library v20.2.0](https://github.com/rlabrecque/Steamworks.NET/releases/tag/20.2.0)
+> [!IMPORTANT]
+> **LEVEL UPLOAD WILL NEVER BE SUPPORTED WITHOUT UNSTRIPPED STEAMWORKS**
+
 > [!IMPORTANT]
 > This mod will not function without the required DLC and Unstripped Libraries. Ensure both are installed before use.
 
@@ -31,23 +35,29 @@
    - Extract the ZIP.
    - Copy all `.dll` files to: `Quadrata\Quadrata_Data\Managed`
    - Replace any existing files if prompted.
+     
+2. **(Optional) Install Steamworks.NET for Level Upload Support**
+   > This is only needed if you want to upload levels
+   - Download [Steamworks.NET v20.2.0](https://github.com/rlabrecque/Steamworks.NET/releases/tag/20.2.0).  
+   - Extract the ZIP.  
+   - Copy the unstripped Steamworks `.dll` files to: `Quadrata\Quadrata_Data\Managed`
 
-2. Install MelonLoader:
+4. Install MelonLoader:
    - Option A: Use the installer and point it to your Quadrata game directory if not automatically found.
    - Option B: Manually extract MelonLoader files into the Quadrata game folder.
 
-3. Add the Mod:
+5. Add the Mod:
    - Download the [latest pre-release of the mod](https://github.com/bud3699/QuadrataCustomLevelsMod/tags).
    - Create a `Mods` folder inside the Quadrata directory if it doesn't exist.
    - Place `CustomLevels.dll` inside `Quadrata\Mods`.
   
 
-4. Add the Mod Updater (Optional):
+6. Add the Mod Updater (Optional):
    - Download the [latest pre-release of the mod Updater](https://github.com/bud3699/QuadrataCustomLevelsMod/tags).
    - Create a `Plugins` folder inside the Quadrata directory if it doesn't exist.
    - Place `CustomLevelsModUpdater.dll` inside `Quadrata\Plugins`.
 
-5. Launch the Game:
+7. Launch the Game:
    - Start Quadrata normally.
    - MelonLoader should appear and confirm the mod is loaded.
 
