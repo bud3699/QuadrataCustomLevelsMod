@@ -36,11 +36,18 @@
    - Copy all `.dll` files to: `Quadrata\Quadrata_Data\Managed`
    - Replace any existing files if prompted.
      
-2. **(Optional) Install Steamworks.NET for Level Upload Support**
-   > This is only needed if you want to upload levels
-   - Download [Steamworks.NET v20.2.0](https://github.com/rlabrecque/Steamworks.NET/releases/tag/20.2.0).  
-   - Extract the ZIP.  
-   - Copy the unstripped Steamworks `.dll` files to: `Quadrata\Quadrata_Data\Managed`
+2. (Optional) Install Steamworks.NET for Level Upload Support
+   > Only required if you plan to upload levels.
+   - Download `Steamworks.NET-Standalone_20.2.0.zip` from:
+     https://github.com/rlabrecque/Steamworks.NET/releases/tag/20.2.0
+   - Extract the ZIP file.
+   - Navigate to:
+     `\Windows-x64`
+   - Copy the following file:
+     `Steamworks.NET.dll`
+   - Paste it into:
+     `Quadrata\Quadrata_Data\Managed`
+
 
 4. Install MelonLoader:
    - Option A: Use the installer and point it to your Quadrata game directory if not automatically found.
