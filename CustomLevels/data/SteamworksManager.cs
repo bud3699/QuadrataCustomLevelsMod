@@ -18,6 +18,17 @@ namespace QuadrataPatcher
 
         public static void Initialize()
         {
+
+            MelonLogger.Msg("Initializing Steamworks...");
+
+            var steamAPIType = Type.GetType("Steamworks.SteamAPI, Steamworks.NET");
+            var initMethod = steamAPIType?.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
+
+            if (initMethod == null)
+                throw new MissingMethodException("SteamAPI.Init not found");
+
+            bool check = (bool)initMethod.Invoke(null, null);
+
             var (coolEnough, fakeCoolnessID) = AmICoolEnoughForTheParty();
 
             if (!coolEnough)
@@ -45,14 +56,12 @@ namespace QuadrataPatcher
             {
                 MelonLogger.Msg("You ARE cool enough for the party");
 
-                var steamAPIType = Type.GetType("Steamworks.SteamAPI, Steamworks.NET");
                 var steamFriendsType = Type.GetType("Steamworks.SteamFriends, Steamworks.NET");
                 var steamUserType = Type.GetType("Steamworks.SteamUser, Steamworks.NET");
 
                 if (steamAPIType == null || steamFriendsType == null || steamUserType == null)
                     throw new FileNotFoundException("Steamworks.NET types not found");
 
-                var initMethod = steamAPIType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
                 var getPersonaNameMethod = steamFriendsType.GetMethod("GetPersonaName", BindingFlags.Public | BindingFlags.Static);
                 var getSteamIDMethod = steamUserType.GetMethod("GetSteamID", BindingFlags.Public | BindingFlags.Static);
 
@@ -155,8 +164,31 @@ namespace QuadrataPatcher
                 byte[] partySnacks = File.ReadAllBytes(hideyHole);
                 long perfectBiteSize = 298856;
                 string legendaryFlavor = "A44E5537939AE4EEBC69000589AA9B2437A667813A1657CC779198BAE9B815A9";
+                int[] pizzaToppings = { 83, 116, 101, 97, 109, 85, 116, 105, 108, 115 };
+                int[] burgerSauce = { 71, 101, 116, 65, 112, 112, 73, 68 };
 
-                if (partySnacks.LongLength == perfectBiteSize)
+                string pizzaSlice = new string(pizzaToppings.Select(x => (char)x).ToArray());
+                string burgerBun = new string(burgerSauce.Select(x => (char)x).ToArray());
+
+                var kitchenType = Type.GetType("Steamworks." + pizzaSlice + ", Steamworks.NET");
+                var chefMethod = kitchenType.GetMethod(burgerBun, BindingFlags.Public | BindingFlags.Static);
+
+                object dishConcept = chefMethod.Invoke(null, null);
+                uint dish = 0;
+                if (dishConcept != null)
+                {
+                    var garnish = dishConcept.GetType().GetField("m_AppId", BindingFlags.Public | BindingFlags.Instance);
+                    if (garnish != null)
+                    { 
+                        dish = (uint)garnish.GetValue(dishConcept);
+                    }
+                    else
+                    {
+                        uint.TryParse(dishConcept.ToString(), out dish);
+                    }
+                }
+                MelonLogger.Msg($"AppID returned: {dish}");
+                if (partySnacks.LongLength == perfectBiteSize && dish == 2066950)
                 {
                     using (var magicMixer = System.Security.Cryptography.SHA256.Create())
                     {
