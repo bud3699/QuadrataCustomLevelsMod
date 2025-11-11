@@ -233,6 +233,92 @@ namespace QuadrataPatcher
                     $"\"publicKey\":\"{SaveManagerCustom.CurrentData.publicKey}\"," +
                     $"\"signature\":\"{signature}\"}}";
 
+                rootRect.DOScale(Vector3.zero, 0.25f)
+                    .SetEase(Ease.InBack)
+                    .OnComplete(() =>
+                    {
+                        Destroy(uiRoot);
+                        ShowUploadingMenu(blocker, finalJson, rootRect);
+                    })
+                    .Play();
+
+            });
+
+
+            CreateButton("Cancel", -120f, () =>
+            {
+                Debug.Log("Custom level upload canceled.");
+                rootRect.DOScale(Vector2.zero, 0.25f)
+                    .SetEase(Ease.InBack)
+                    .SetDelay(0.1f)
+                    .OnComplete(() =>
+                    {
+                        Destroy(blocker);
+                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
+                        UIManager.isMenuMoving = false;
+                        LevelAnimation.isLevelLoading = false;
+                    })
+                    .Play();
+            });
+        }
+
+        [Serializable]
+        public class UploadResponse
+        {
+            public string code;
+            public string id;
+        }
+
+
+        private static void ShowUploadingMenu(GameObject parent, string finalJson, RectTransform rootRect)
+        {
+            var uploadUI = new GameObject("UploadingUI");
+            uploadUI.transform.SetParent(parent.transform, false);
+
+            var rect = uploadUI.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(400, 250);
+            rect.localScale = Vector3.zero;
+
+            Sprite menuSprite = Resources.FindObjectsOfTypeAll<Sprite>().FirstOrDefault(s => s.name == "Menu");
+            if (menuSprite != null)
+            {
+                var bgGO = new GameObject("MenuPanel");
+                bgGO.transform.SetParent(uploadUI.transform, false);
+                var bg = bgGO.AddComponent<Image>();
+                bg.sprite = menuSprite;
+                bg.type = Image.Type.Sliced;
+                bg.color = Color.white;
+
+                var bgRect = bgGO.GetComponent<RectTransform>();
+                bgRect.anchorMin = new Vector2(0.5f, 0.5f);
+                bgRect.anchorMax = new Vector2(0.5f, 0.5f);
+                bgRect.pivot = new Vector2(0.5f, 0.5f);
+                bgRect.sizeDelta = rect.sizeDelta;
+            }
+
+            var loadingTextGO = new GameObject("LoadingText");
+            loadingTextGO.transform.SetParent(uploadUI.transform, false);
+            var loadingText = loadingTextGO.AddComponent<Text>();
+            loadingText.text = "Uploading...";
+            loadingText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            loadingText.alignment = TextAnchor.MiddleCenter;
+            loadingText.color = Color.black;
+            loadingText.fontSize = 22;
+
+            var loadingTextRect = loadingTextGO.GetComponent<RectTransform>();
+            loadingTextRect.anchorMin = new Vector2(0.5f, 0.5f);
+            loadingTextRect.anchorMax = new Vector2(0.5f, 0.5f);
+            loadingTextRect.pivot = new Vector2(0.5f, 0.5f);
+            loadingTextRect.sizeDelta = new Vector2(200, 50);
+            loadingTextRect.localPosition = Vector3.zero;
+
+            rect.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).Play();
+
+            System.Threading.Tasks.Task.Run(() =>
+            {
                 try
                 {
                     var request = (HttpWebRequest)WebRequest.Create("https://bud.mynetgear.com/quadrata/api/levels");
@@ -262,55 +348,40 @@ namespace QuadrataPatcher
                             Debug.LogWarning("Could not parse response code.");
                         }
 
-                        rootRect.DOScale(Vector2.zero, 0.25f)
-                            .SetEase(Ease.InBack)
-                            .SetDelay(0.1f)
-                            .OnComplete(() =>
-                            {
-                                ShowSuccessPopup(levelCode, blocker);
-                            })
-                            .Play();
+                        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                        {
+                            rect.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack)
+                                .OnComplete(() =>
+                                {
+                                    Destroy(uploadUI);
+                                    ShowSuccessPopup(levelCode, parent);
+                                }).Play();
+                        });
                     }
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Response != null)
+                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
                     {
-                        using (var reader = new StreamReader(ex.Response.GetResponseStream()))
-                            Debug.LogError("Upload failed:\n" + reader.ReadToEnd());
-                    }
-                    else
-                    {
-                        Debug.LogError("Upload failed: " + ex.Message);
-                    }
+                        rect.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack)
+                            .OnComplete(() =>
+                            {
+                                Destroy(uploadUI);
+                                if (ex.Response != null)
+                                {
+                                    using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                                        Debug.LogError(" Upload failed:\n" + reader.ReadToEnd());
+                                }
+                                else
+                                {
+                                    Debug.LogError(" Upload failed: " + ex.Message);
+                                }
+                            }).Play();
+                    });
                 }
 
                 gameLevelUpload = null;
             });
-
-
-            CreateButton("Cancel", -120f, () =>
-            {
-                Debug.Log("Custom level upload canceled.");
-                rootRect.DOScale(Vector2.zero, 0.25f)
-                    .SetEase(Ease.InBack)
-                    .SetDelay(0.1f)
-                    .OnComplete(() =>
-                    {
-                        Destroy(blocker);
-                        UIManager.currentLayer = UIManager.instance.sandboxLayer;
-                        UIManager.isMenuMoving = false;
-                        LevelAnimation.isLevelLoading = false;
-                    })
-                    .Play();
-            });
-        }
-
-        [Serializable]
-        public class UploadResponse
-        {
-            public string code;
-            public string id;
         }
 
         private static void ShowSuccessPopup(string code, GameObject parent)
